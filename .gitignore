@@ -1,0 +1,12 @@
+*.o
+*.so
+*.a
+*.import.scm
+
+include/xdg-shell-protocol.h
+src/xdg-shell-protocol.c
+
+tinywl
+
+*.swp
+

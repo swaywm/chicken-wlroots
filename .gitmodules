@@ -1,0 +1,9 @@
+[submodule "chicken-wayland-server"]
+	path = chicken-wayland-server
+	url = https://github.com/drewt/chicken-wayland-server
+[submodule "chicken-xkbcommon"]
+	path = chicken-xkbcommon
+	url = https://github.com/drewt/chicken-xkbcommon
+[submodule "wlroots"]
+	path = wlroots
+	url = https://github.com/swaywm/wlroots

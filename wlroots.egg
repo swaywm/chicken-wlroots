@@ -1,0 +1,28 @@
+((author "Drew Thoreson")
+ (synopsis "Bindings to the wlroots library")
+ (category graphics)
+ (license "MIT")
+ (build-dependencies foreigners bind wayland-server xkbcommon)
+ (foreign-dependencies "libwayland" "wayland-protocols" "wlroots" "xkbcommon")
+ (components
+   (extension wlroots
+     (custom-build "build.sh")
+     (linkage dynamic)
+     (modules wlroots
+              wlr.backend
+              wlr.render.wlr-renderer
+              wlr.types.wlr-box
+              wlr.types.wlr-compositor
+              wlr.types.wlr-cursor
+              wlr.types.wlr-data-device
+              wlr.types.wlr-input-device
+              wlr.types.wlr-keyboard
+              wlr.types.wlr-matrix
+              wlr.types.wlr-output-layout
+              wlr.types.wlr-output
+              wlr.types.wlr-pointer
+              wlr.types.wlr-seat
+              wlr.types.wlr-surface
+              wlr.types.wlr-xcursor-manager
+              wlr.types.wlr-xdg-shell
+              wlr.util.edges))))

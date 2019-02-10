@@ -26,6 +26,7 @@
 (import (scheme base)
         (scheme process-context)
         (srfi 1)
+        (srfi 4)
         (srfi 17)
         (srfi 28) ; format
         (chicken bitwise)
@@ -478,6 +479,8 @@
         ; prepare another one now if it likes.
         (wlr-surface-send-frame-done surface time)))))
 
+(define clear-color (f32vector 0.3 0.3 0.3 1.0))
+
 ; This function is called every time an output is ready to display a frame,
 ; generally at the output's refresh rate (e.g. 60Hz).
 (define (output-frame server wm-output output)
@@ -490,7 +493,7 @@
       (let-values (((width height) (wlr-output-effective-resolution output)))
         ; Begin the renderer (calls glViewport and some other GL sanity checks)
         (wlr-renderer-begin renderer width height))
-      (wlr-renderer-clear renderer 0.3 0.3 0.3 1.0)
+      (wlr-renderer-clear renderer clear-color)
 
       ; Each subsequent window we render is rendered on top of the last.
       (for-each (lambda (view)

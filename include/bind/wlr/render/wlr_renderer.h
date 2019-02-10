@@ -17,7 +17,7 @@ struct wlr_renderer *wlr_renderer_autocreate(struct wlr_egl *egl, EGLenum platfo
 
 void wlr_renderer_begin(struct wlr_renderer *r, int width, int height);
 void wlr_renderer_end(struct wlr_renderer *r);
-//void wlr_renderer_clear(struct wlr_renderer *r, const float color[static 4]);
+void wlr_renderer_clear(struct wlr_renderer *r, const float color[static 4]);
 /**
  * Defines a scissor box. Only pixels that lie within the scissor box can be
  * modified by drawing functions. Providing a NULL `box` disables the scissor
@@ -38,22 +38,22 @@ bool wlr_render_texture_with_matrix(struct wlr_renderer *r,
  * Renders a solid rectangle in the specified color.
  */
 void wlr_render_rect(struct wlr_renderer *r, const struct wlr_box *box,
-	const wlr_rgba color, const wlr_matrix projection);
+	const float color[static 4], const wlr_matrix projection);
 /**
  * Renders a solid quadrangle in the specified color with the specified matrix.
  */
 void wlr_render_quad_with_matrix(struct wlr_renderer *r,
-	const wlr_rgba color, const wlr_matrix matrix);
+	const float color[static 4], const wlr_matrix matrix);
 /**
  * Renders a solid ellipse in the specified color.
  */
 void wlr_render_ellipse(struct wlr_renderer *r, const struct wlr_box *box,
-	const wlr_rgba color, const wlr_matrix projection);
+	const float color[static 4], const wlr_matrix projection);
 /**
  * Renders a solid ellipse in the specified color with the specified matrix.
  */
 void wlr_render_ellipse_with_matrix(struct wlr_renderer *r,
-	const wlr_rgba color, const wlr_matrix matrix);
+	const float color[static 4], const wlr_matrix matrix);
 /**
  * Returns a list of pixel formats supported by this renderer.
  */

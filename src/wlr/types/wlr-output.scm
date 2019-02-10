@@ -129,8 +129,7 @@
          wlr-output-cursor-destroy
          wlr-output-transform-invert
          wlr-output-transform-compose)
-  (import (scheme)
-          (chicken base)
+  (import (scheme base)
           (chicken foreign)
           (foreigners)
           (ffi-helpers)

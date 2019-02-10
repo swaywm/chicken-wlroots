@@ -57,10 +57,4 @@
     (wlr-renderer-read-pixels/y-invert "WLR_RENDERER_READ_PIXELS_Y_INVERT"))
 
   (define-foreign-record-type (wlr-renderer* "struct wlr_renderer")
-    ((struct "wl_signal") events.destroy wlr-renderer-events-destroy))
-
-  (define wlr-renderer-clear
-    (foreign-lambda* void ((wlr-renderer* renderer)
-                           (float r) (float g) (float b) (float a))
-      "float color[4] = {r,g,b,a};"
-      "wlr_renderer_clear(renderer, color);")))
+    ((struct "wl_signal") events.destroy wlr-renderer-events-destroy)))

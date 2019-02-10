@@ -33,8 +33,7 @@
          wlr-matrix-transform
          wlr-matrix-projection
          wlr-matrix-project-box)
-  (import (scheme)
-          (chicken base)
+  (import (scheme base)
           (chicken foreign)
           (chicken gc)
           (chicken memory)

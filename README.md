@@ -54,15 +54,22 @@ Constructors are only exported where it makes sense to do so (e.g. wlr-box); in
 most cases you should use the <code>wlr-\*-create</code> functions provided by
 wlroots.
 
-Procedures use the usual <code>kebab-case</code> convention. For C functions
-taking output parameters, the output parameters are removed (unless their input
-value is also meaningful) and multiple values are returned instead. The order
-of the values is the C return value, followed by the output parameters in
-order.
+Procedures use the usual <code>kebab-case</code> convention.
 
 Enums use the convention <code>enum-prefix/kind</code>, e.g.
 <code>WLR\_INPUT\_DEVICE\_KEYBOARD</code> becomes
 <code>wlr-input-device/keyboard</code>.
+
+### Differences from the C API
+
+For C functions taking output parameters, these bindings remove the output
+parameters (unless their input value is also meaningful) and return multiple
+values instead. The order of the returned values is the C return value,
+followed by the output parameters in order.
+
+Because some wlroots functions take a <code>struct timespec</code> as an
+argument, these bindings provide a module <code>(wlr time)</code> which exports
+the <code>clock-gettime</code> function.
 
 Examples
 --------

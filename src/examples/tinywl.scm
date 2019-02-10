@@ -38,6 +38,7 @@
         (wayland-server)
         (wlr backend)
         (wlr render wlr-renderer)
+        (wlr time) ; clock-gettime
         (wlr types wlr-box)
         (wlr types wlr-compositor)
         (wlr types wlr-cursor)
@@ -485,7 +486,7 @@
 ; generally at the output's refresh rate (e.g. 60Hz).
 (define (output-frame server wm-output output)
   (let-values (((renderer) (server:renderer server))
-               ((now) (clock-gettime 'monotonic))
+               ((now) (clock-gettime))
                ; wlr-output-make-current makes the OpenGL context current.
                ((success buffer-age) (wlr-output-make-current output)))
     (when success

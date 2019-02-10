@@ -34,9 +34,7 @@ void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, vo
 <#
 
 (module (wlr types wlr-surface)
-        (clock-gettime ; FIXME- this shouldn't be here
-
-         wlr-surface-state/buffer
+        (wlr-surface-state/buffer
          wlr-surface-state/surface-damage
          wlr-surface-state/buffer-damage
          wlr-surface-state/opaque-region
@@ -132,23 +130,6 @@ void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, vo
 
   (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_surface.h")
-
-  (define-foreign-type timespec* (c-pointer (struct "timespec")))
-
-  (define (make-timespec)
-    (let ((ts ((foreign-lambda* timespec* ()
-                 "struct timespec *ts = malloc(sizeof(struct timespec));"
-                 "C_return(ts);"))))
-      (set-finalizer! ts free)
-      ts))
-
-  (define (clock-gettime clock)
-    (let ((clock (case clock
-                   ((realtime) (foreign-value "CLOCK_REALTIME" int))
-                   ((monotonic) (foreign-value "CLOCK_MONOTONIC" int))))
-          (ts (make-timespec)))
-      ((foreign-lambda int "clock_gettime" int timespec*) clock ts)
-      ts))
 
   (define-foreign-values wlr-surface-state-field
     (wlr-surface-state/buffer              "WLR_SURFACE_STATE_BUFFER")

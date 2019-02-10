@@ -44,6 +44,7 @@ modules = ffi-helpers \
           slib/getopt \
           wlr/backend \
           wlr/render/wlr-renderer \
+          wlr/time \
           wlr/types/wlr-box \
           wlr/types/wlr-compositor \
           wlr/types/wlr-cursor \

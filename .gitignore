@@ -8,5 +8,8 @@ src/xdg-shell-protocol.c
 
 tinywl
 
+wlroots.build.sh
+wlroots.install.sh
+
 *.swp
 

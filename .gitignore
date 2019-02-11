@@ -7,6 +7,7 @@ include/xdg-shell-protocol.h
 src/xdg-shell-protocol.c
 
 tinywl
+pointer
 
 wlroots.build.sh
 wlroots.install.sh

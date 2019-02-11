@@ -57,11 +57,12 @@ modules = ffi-helpers \
           wlr/types/wlr-output-layout \
           wlr/types/wlr-seat \
           wlr/types/wlr-surface \
+          wlr/types/wlr-tablet-tool \
           wlr/types/wlr-xcursor-manager \
           wlr/types/wlr-xdg-shell \
           wlr/util/edges
 protocols = xdg-shell-protocol
-examples = tinywl
+examples = tinywl pointer
 
 clean = chicken-wlroots.a wlroots.so \
         $(call objfiles,$(modules) $(addprefix examples/,$(examples))) $(examples) \

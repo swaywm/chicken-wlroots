@@ -257,6 +257,10 @@
 (define-foreign-type wlr-output-present-flag (enum "wlr_output_present_flag"))
 (define-foreign-type wlr-renderer-read-pixels-flags (enum "wlr_renderer_read_pixels_flags"))
 (define-foreign-type wlr-surface-state-field (enum "wlr_surface_state_field"))
+(define-foreign-type wlr-tablet-tool-axes (enum "wlr_tablet_tool_axes"))
+(define-foreign-type wlr-tablet-tool-proximity-state (enum "wlr_tablet_tool_proximity_state"))
+(define-foreign-type wlr-tablet-tool-tip-state (enum "wlr_tablet_tool_tip_state"))
+(define-foreign-type wlr-tablet-tool-type (enum "wlr_tablet_tool_type"))
 (define-foreign-type wlr-xdg-surface-role (enum "wlr_xdg_surface_role"))
 
 (define-foreign-type wlr-matrix (c-pointer float)) ; float[9]

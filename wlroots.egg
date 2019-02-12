@@ -26,4 +26,5 @@
               wlr.types.wlr-surface
               wlr.types.wlr-xcursor-manager
               wlr.types.wlr-xdg-shell
-              wlr.util.edges))))
+              wlr.util.edges
+              wlr.util.log))))

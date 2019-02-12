@@ -35,6 +35,7 @@
         (wlr types wlr-pointer)
         (wlr types wlr-tablet-tool)
         (wlr types wlr-xcursor-manager)
+        (wlr util log)
         (xkbcommon))
 
 (include "xkbcommon-keysyms.scm")
@@ -77,8 +78,7 @@
   (destroy keyboard-destroy keyboard-destroy-set!))
 
 (define (exit/error message)
-  ; TODO: wlr_log
-  (format #t message)
+  (wlr-log 'error message)
   (exit 1))
 
 (define (warp-to-touch state dev)
@@ -236,6 +236,7 @@
           (xkb-keymap-unref keymap)
           (xkb-context-unref context))))))
 
+(wlr-log-init 'debug)
 (let* ((display (wl-display-create))
        (backend (or (wlr-backend-autocreate display #f)
                     (exit/error "Failed to create backend~%")))

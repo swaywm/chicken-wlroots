@@ -60,7 +60,8 @@ modules = ffi-helpers \
           wlr/types/wlr-tablet-tool \
           wlr/types/wlr-xcursor-manager \
           wlr/types/wlr-xdg-shell \
-          wlr/util/edges
+          wlr/util/edges \
+          wlr/util/log
 protocols = xdg-shell-protocol
 examples = tinywl pointer
 

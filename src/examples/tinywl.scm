@@ -54,6 +54,7 @@
         (wlr types wlr-xcursor-manager)
         (wlr types wlr-xdg-shell)
         (wlr util edges)
+        (wlr util log)
         (xkbcommon))
 
 (include "xkbcommon-keysyms.scm")
@@ -643,6 +644,8 @@
           (usage)))
   (if (< (option-index) (length (command-line)))
     (loop)))
+
+(wlr-log-init 'debug)
 
        ; The wayland display is managed by libwayland. It handles accepting
        ; clients from the Unix socket, managing Wayland globals, and so on.

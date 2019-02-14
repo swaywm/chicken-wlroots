@@ -166,11 +166,11 @@
 ; This function assumes Alt is held down.
 (define (handle-keybinding server sym)
   (cond
-    ((or (= sym xkb-key-escape)
-         (= sym xkb-key-f2))
+    ((or (= sym XKB_KEY_Escape)
+         (= sym XKB_KEY_F2))
       (wl-display-terminate (server:display server))
       #t)
-    ((= sym xkb-key-f1)
+    ((= sym XKB_KEY_F1)
       ; cycle to the next view
       (let* ((views (server:views server))
              (nr-views (length views)))

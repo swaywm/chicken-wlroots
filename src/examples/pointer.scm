@@ -176,7 +176,7 @@
   (let ((keycode (+ 8 (wlr-event-keyboard-key-keycode event)))
         (wlr-keyboard (wlr-input-device-keyboard (keyboard-device keyboard))))
     (for-each (lambda (sym)
-                (when (= sym xkb-key-escape)
+                (when (= sym XKB_KEY_Escape)
                   (wl-display-terminate (state-display (keyboard-state keyboard)))))
               (xkb-state-key-get-syms (wlr-keyboard-xkb-state wlr-keyboard) keycode))))
 

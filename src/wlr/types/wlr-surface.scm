@@ -97,11 +97,14 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-subsurface-has-cache?
          wlr-subsurface-synchronized?
          wlr-subsurface-reordered?
+         wlr-subsurface-mapped?
          wlr-subsurface-parent-link
          wlr-subsurface-parent-pending-link
          wlr-subsurface-surface-destroy
          wlr-subsurface-parent-destroy
          wlr-subsurface-events-destroy
+         wlr-subsurface-events-map
+         wlr-subsurface-events-unmap
          wlr-subsurface-data
 
          wlr-surface-create
@@ -126,6 +129,7 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
   (include "ffi-helpers.scm")
 
   (bind-file "include/bind/wlr/types/wlr_surface.h")
+  (define wlr-subsurface-mapped? wlr-subsurface-mapped)
 
   (define-foreign-values wlr-surface-state-field
     (wlr-surface-state/buffer              "WLR_SURFACE_STATE_BUFFER")
@@ -172,7 +176,9 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
     ((struct "wl_list") parent_pending_link wlr-subsurface-parent-pending-link)
     ((struct "wl_listener") surface_destroy wlr-subsurface-surface-destroy)
     ((struct "wl_listener") parent_destroy wlr-subsurface-parent-destroy)
-    ((struct "wl_signal") events.destroy wlr-subsurface-events-destroy))
+    ((struct "wl_signal") events.destroy wlr-subsurface-events-destroy)
+    ((struct "wl_signal") events.map wlr-subsurface-events-map)
+    ((struct "wl_signal") events.unmap wlr-subsurface-events-unmap))
 
   (define wlr-surface-for-each-surface
     (foreign-safe-lambda* void ((wlr-surface* surface) (scheme-object callback))

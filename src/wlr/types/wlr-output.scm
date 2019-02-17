@@ -109,6 +109,7 @@
          wlr-output-set-transform
          wlr-output-set-position
          wlr-output-set-scale
+         wlr-output-set-subpixel
          wlr-output-destroy
          wlr-output-transformed-resolution
          wlr-output-effective-resolution

@@ -379,7 +379,7 @@
 
 ; This event is forwarded by the cursor when a pointer emits a _relative_
 ; pointer motion event (i.e. a delta).
-(define (server:cursor-motion server event)
+(define (server-cursor-motion server event)
   ; The cursor doesn't move unless we tell it to. The cursor automatically
   ; handles constraining the motion to the output layout, as well as any
   ; special configuration applid for the specific input device which
@@ -397,7 +397,7 @@
 ; move the mouse over the window. You could enter the window from any edge,
 ; so we have to warp the mouse there. There is also some hardware which
 ; emits these events.
-(define (server:cursor-motion-absolute server event)
+(define (server-cursor-motion-absolute server event)
   (wlr-cursor-warp-absolute (server:cursor server)
                             (wlr-event-pointer-motion-absolute-device event)
                             (wlr-event-pointer-motion-absolute-x event)
@@ -405,7 +405,7 @@
   (process-cursor-motion server (wlr-event-pointer-motion-absolute-time-msec event)))
 
 ; This event is forwarded by the cursor when a pointer emits a button event.
-(define (server:cursor-button server event)
+(define (server-cursor-button server event)
   ; Notify the client with a pointer focus that a button press has occurred.
   (wlr-seat-pointer-notify-button (server:seat server)
                                   (wlr-event-pointer-button-time-msec event)
@@ -424,7 +424,7 @@
 
 ; This event is forwarded by the cursor when a pointer emits an axis event,
 ; for example when you move the scroll wheel.
-(define (server:cursor-axis server event)
+(define (server-cursor-axis server event)
   ; Notify the client with a pointer focus of the axis event.
   (wlr-seat-pointer-notify-axis (server:seat server)
                                 (wlr-event-pointer-axis-time-msec event)
@@ -432,6 +432,9 @@
                                 (wlr-event-pointer-axis-delta event)
                                 (wlr-event-pointer-axis-delta-discrete event)
                                 (wlr-event-pointer-axis-source event)))
+
+(define (server-cursor-frame server)
+  (wlr-seat-pointer-notify-frame (server:seat server)))
 
 ; This function is called for every surface that needs to be rendered.
 (define (render-surface surface sx sy output view renderer time)
@@ -705,13 +708,15 @@
   ; can choose how we want to process them, forwarding them to clients and
   ; moving the cursor around.
   (wl-signal-add (wlr-cursor-events-motion cursor)
-    (make-wl-listener (lambda (event) (server:cursor-motion server event))))
+    (make-wl-listener (lambda (event) (server-cursor-motion server event))))
   (wl-signal-add (wlr-cursor-events-motion-absolute cursor)
-    (make-wl-listener (lambda (event) (server:cursor-motion-absolute server event))))
+    (make-wl-listener (lambda (event) (server-cursor-motion-absolute server event))))
   (wl-signal-add (wlr-cursor-events-button cursor)
-    (make-wl-listener (lambda (event) (server:cursor-button server event))))
+    (make-wl-listener (lambda (event) (server-cursor-button server event))))
   (wl-signal-add (wlr-cursor-events-axis cursor)
-    (make-wl-listener (lambda (event) (server:cursor-axis server event))))
+    (make-wl-listener (lambda (event) (server-cursor-axis server event))))
+  (wl-signal-add (wlr-cursor-events-frame cursor)
+    (make-wl-listener (lambda (_) (server-cursor-frame server))))
 
   ; Configures a seat, which is a single "seat" at which the user sits and
   ; operates the computer. This conceptually includes up to one keyboard,

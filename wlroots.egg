@@ -2,29 +2,77 @@
  (synopsis "Bindings to the wlroots library")
  (category graphics)
  (license "MIT")
- (build-dependencies foreigners bind wayland-server xkbcommon)
+ (build-dependencies srfi-1 srfi-13 foreigners bind wayland-server xkbcommon)
  (foreign-dependencies "libwayland" "wayland-protocols" "wlroots" "xkbcommon")
+ (component-options (csc-options "-I" "./include"
+                                 "-I./include"
+                                 "-R" "bind"
+                                 "-X" "bind"
+                                 "-C" "-DWLR_USE_UNSTABLE"))
  (components
-   (extension wlroots
-     (custom-build "build.sh")
-     (linkage dynamic)
-     (modules wlroots
-              wlr.backend
-              wlr.render.wlr-renderer
-              wlr.time
-              wlr.types.wlr-box
-              wlr.types.wlr-compositor
-              wlr.types.wlr-cursor
-              wlr.types.wlr-data-device
-              wlr.types.wlr-input-device
-              wlr.types.wlr-keyboard
-              wlr.types.wlr-matrix
-              wlr.types.wlr-output-layout
-              wlr.types.wlr-output
-              wlr.types.wlr-pointer
-              wlr.types.wlr-seat
-              wlr.types.wlr-surface
-              wlr.types.wlr-xcursor-manager
-              wlr.types.wlr-xdg-shell
-              wlr.util.edges
-              wlr.util.log))))
+   (extension wlr.backend
+     (custom-build "custom-build.scm")
+     (source "src/wlr/backend.scm"))
+   (extension wlr.render.wlr-renderer
+     (custom-build "custom-build.scm")
+     (source "src/wlr/render/wlr-renderer.scm"))
+   (extension wlr.time
+     (custom-build "custom-build.scm")
+     (source "src/wlr/time.scm"))
+   (extension wlr.types.wlr-box
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-box.scm"))
+   (extension wlr.types.wlr-compositor
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-compositor.scm"))
+   (extension wlr.types.wlr-cursor
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-cursor.scm"))
+   (extension wlr.types.wlr-data-device
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-data-device.scm"))
+   (extension wlr.types.wlr-input-device
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-input-device.scm"))
+   (extension wlr.types.wlr-keyboard
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-keyboard.scm"))
+   (extension wlr.types.wlr-matrix
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-matrix.scm"))
+   (extension wlr.types.wlr-output-layout
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-output-layout.scm"))
+   (extension wlr.types.wlr-output
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-output.scm"))
+   (extension wlr.types.wlr-pointer
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-pointer.scm"))
+   (extension wlr.types.wlr-seat
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-seat.scm"))
+   (extension wlr.types.wlr-surface
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-surface.scm"))
+   (extension wlr.types.wlr-tablet-tool
+      (custom-build "custom-build.scm")
+      (source "src/wlr/types/wlr-tablet-tool.scm"))
+   (extension wlr.types.wlr-xcursor-manager
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-xcursor-manager.scm"))
+   (extension wlr.types.wlr-xdg-shell
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-xdg-shell.scm")
+     (component-dependencies wlr.types.wlr-box
+                             wayland-protocols))
+   (extension wlr.util.edges
+     (custom-build "custom-build.scm")
+     (source "src/wlr/util/edges.scm"))
+   (extension wlr.util.log
+     (custom-build "custom-build.scm")
+     (source "src/wlr/util/log.scm"))
+   ; XXX: build all wayland protocols at once because we
+   ;      can't pass arguments to a custom-build script
+   (generated-source-file wayland-protocols
+     (custom-build "wayland-protocols.build.scm"))))

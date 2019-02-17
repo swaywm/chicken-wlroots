@@ -22,8 +22,15 @@
 (include "wlroots-types.scm")
 
 #>
-/* Defined in wlr/types/wlr-surface.scm */
-void scheme_wlr_surface_iterator(struct wlr_surface*, int, int, void*);
+/* Invoke a Scheme callback passed in as a GC root. */
+static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, void *root)
+{
+  C_word *ptr = C_alloc(sizeof(C_word));
+  C_save(C_fix(sy));
+  C_save(C_fix(sx));
+  C_save(C_mpointer_or_false(&ptr, surface));
+  C_callback(CHICKEN_gc_root_ref(root), 3);
+}
 <#
 
 (module (wlr types wlr-xdg-shell)
@@ -189,13 +196,10 @@ void scheme_wlr_surface_iterator(struct wlr_surface*, int, int, void*);
          wlr-xdg-surface-for-each-popup)
   (import (scheme)
           (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind)
-          (wlr types wlr-box))
+          (wlr types wlr-box)
+          (wlr types wlr-surface))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-rename wlr_xdg_surface_get_geometry %wlr-xdg-surface-get-geometry)
   (bind-file "include/bind/wlr/types/wlr_xdg_shell.h")
 

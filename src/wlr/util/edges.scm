@@ -28,8 +28,9 @@
          wlr-edge/left
          wlr-edge/right)
   (import (scheme)
-          (chicken foreign)
-          (ffi-helpers))
+          (chicken base))
+  (include "ffi-helpers.scm")
+
   (define-foreign-values wlr-edges
     (wlr-edge/none   "WLR_EDGE_NONE")
     (wlr-edge/top    "WLR_EDGE_TOP")

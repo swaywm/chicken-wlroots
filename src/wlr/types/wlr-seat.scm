@@ -217,12 +217,9 @@
          wlr-seat-client-from-resource
          wlr-seat-client-from-pointer-resource)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_seat.h")
 
   (define-foreign-record-type (wlr-seat-client* "struct wlr_seat_client")

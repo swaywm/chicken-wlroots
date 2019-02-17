@@ -33,13 +33,12 @@
          wlr-matrix-transform
          wlr-matrix-projection
          wlr-matrix-project-box)
-  (import (scheme base)
-          (chicken foreign)
+  (import (scheme)
+          (chicken base)
           (chicken gc)
-          (chicken memory)
-          (bind))
+          (chicken memory))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_matrix.h")
 
   (define-foreign-type wlr-matrix (c-pointer float))

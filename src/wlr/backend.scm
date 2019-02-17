@@ -32,12 +32,9 @@
          wlr-backend-get-session
          wlr-backend-get-presentation-clock)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/backend.h")
 
   (define-foreign-record-type (wlr-backend* "struct wlr_backend")

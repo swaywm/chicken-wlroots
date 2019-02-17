@@ -130,13 +130,9 @@
          wlr-output-transform-invert
          wlr-output-transform-compose)
   (import (scheme base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind)
           (wayland-server))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_output.h")
 
   (define-foreign-record-type (wlr-output-mode* "struct wlr_output_mode")

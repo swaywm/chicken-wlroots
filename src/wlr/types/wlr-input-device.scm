@@ -51,13 +51,9 @@
          wlr-input-device-data
          wlr-input-device-link)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_input_device.h")
 
   (define-foreign-values wlr-button-state

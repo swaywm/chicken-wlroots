@@ -14,19 +14,13 @@ Dependencies:
 * wlroots
 
 Simply run <code>chicken-install</code> in this directory to build and install
-chicken-wlroots as an egg.
-
-It is also possible to build a static archive, by running
-<code>make chicken-wlroots.a</code>. You will need to put the various
-<code>\*.import.scm</code> files on your include path in order to import the corresponding
-modules if you use static linking.
+chicken-wlroots as an egg. To avoid building the egg as root, you can either
+run <code>chicken-install -sudo</code> to get permissions via sudo, or else
+[change the repository location](https://wiki.call-cc.org/man/5/Extension%20tools#changing-the-repository-location)
+to a directory that you can write to.
 
 Usage
 -----
-
-If you install chicken-wlroots as an egg, you must load the wlroots extension
-before importing any of its modules. The easiest way is to add
-<code>-R wlroots</code> to the command line when invoking the chicken compiler.
 
 ### Memory Management
 
@@ -74,5 +68,7 @@ the <code>clock-gettime</code> function.
 Examples
 --------
 
-Example programs can be found in the example directory. These are fairly
+Example programs can be found in the src/examples directory. These are fairly
 direct translations from C, so do not expect idiomatic Scheme.
+
+To build the examples, run <code>make</code> after installing chicken-wlroots.

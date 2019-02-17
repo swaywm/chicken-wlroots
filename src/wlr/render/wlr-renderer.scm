@@ -44,13 +44,9 @@
          wlr-renderer-init-wl-display
          wlr-renderer-destroy)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/render/wlr_renderer.h")
 
   (define-foreign-values wlr-renderer-read-pixels-flags

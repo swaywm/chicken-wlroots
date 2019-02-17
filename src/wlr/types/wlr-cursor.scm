@@ -63,12 +63,9 @@
          wlr-cursor-map-to-region
          wlr-cursor-map-input-to-region)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_cursor.h")
 
   (define-foreign-record-type (wlr-cursor* "struct wlr_cursor")

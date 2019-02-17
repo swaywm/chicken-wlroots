@@ -27,12 +27,9 @@
          wlr-surface-is-subsurface
          wlr-subsurface-from-wlr-surface)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_compositor.h")
 
   (define-foreign-record-type (wlr-subcompositor* "struct wlr_subcompositor")

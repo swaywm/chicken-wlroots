@@ -98,13 +98,9 @@
          wlr-event-pointer-pinch-end-time-msec
          wlr-event-pointer-pinch-end-cancelled?)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_pointer.h")
 
   (define-foreign-record-type (wlr-pointer* "struct wlr_pointer")

@@ -39,13 +39,9 @@
          wlr-output-layout-adjacent-output
          wlr-output-layout-farthest-output)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_output_layout.h")
 
   (define-foreign-record-type (wlr-output-layout* "struct wlr_output_layout")

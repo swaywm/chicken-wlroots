@@ -75,13 +75,9 @@
          wlr-keyboard-led-update
          wlr-keyboard-get-modifiers)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_keyboard.h")
 
   (define-foreign-type xkb-mod-mask unsigned-int32)

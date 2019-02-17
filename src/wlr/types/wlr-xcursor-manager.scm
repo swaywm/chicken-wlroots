@@ -36,12 +36,9 @@
          wlr-xcursor-manager-get-xcursor
          wlr-xcursor-manager-set-cursor-image)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_xcursor_manager.h")
 
   (define-foreign-record-type (wlr-xcursor-manager-theme* "struct wlr_xcursor_manager_theme")

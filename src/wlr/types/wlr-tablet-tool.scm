@@ -103,13 +103,9 @@
          wlr-event-tablet-tool-button-button
          wlr-event-tablet-tool-button-state)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_tablet_tool.h")
 
   (define-foreign-values wlr-tablet-tool-type

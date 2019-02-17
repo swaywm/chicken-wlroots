@@ -34,13 +34,9 @@
          wlr-data-source-dnd-finish
          wlr-data-source-dnd-action)
   (import (scheme)
-          (chicken base)
-          (chicken foreign)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken base))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_data_device.h")
 
   (define-foreign-record-type (wlr-data-device-manager* "struct wlr_data_device_manager")

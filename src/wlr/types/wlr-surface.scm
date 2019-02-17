@@ -23,7 +23,7 @@
 
 #>
 /* Invoke a Scheme callback passed in as a GC root. */
-void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, void *root)
+static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, void *root)
 {
   C_word *ptr = C_alloc(sizeof(C_word));
   C_save(C_fix(sy));
@@ -121,14 +121,10 @@ void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int sy, vo
          wlr-surface-get-effective-damage)
   (import (scheme)
           (chicken base)
-          (chicken foreign)
           (chicken gc)
-          (chicken memory)
-          (foreigners)
-          (ffi-helpers)
-          (bind))
+          (chicken memory))
+  (include "ffi-helpers.scm")
 
-  (include "bind-options.scm")
   (bind-file "include/bind/wlr/types/wlr_surface.h")
 
   (define-foreign-values wlr-surface-state-field

@@ -9,9 +9,9 @@ Building
 Dependencies:
 
 * CHICKEN 5
-* chicken-wayland-server
-* chicken-xkbcommon (for example programs)
-* wlroots
+* [chicken-wayland-server](https://github.com/drewt/chicken-wayland-server)
+* [chicken-xkbcommon](https://github.com/drewt/chicken-xkbcommon) (for example programs)
+* [wlroots](https://github.com/swaywm/wlroots)
 
 Simply run <code>chicken-install</code> in this directory to build and install
 chicken-wlroots as an egg. To avoid building the egg as root, you can either

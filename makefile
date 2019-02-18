@@ -19,6 +19,7 @@ modules   = slib.getopt \
             wlr.types.wlr-matrix \
             wlr.types.wlr-pointer \
             wlr.types.wlr-output \
+	    wlr.types.wlr-output-damage \
             wlr.types.wlr-output-layout \
             wlr.types.wlr-seat \
             wlr.types.wlr-surface \

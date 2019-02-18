@@ -130,7 +130,8 @@
          wlr-output-cursor-destroy
          wlr-output-transform-invert
          wlr-output-transform-compose)
-  (import (scheme base)
+  (import (scheme)
+          (chicken base)
           (wayland-server))
   (include "ffi-helpers.scm")
 

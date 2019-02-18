@@ -40,6 +40,9 @@
    (extension wlr.types.wlr-matrix
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-matrix.scm"))
+   (extension wlr.types.wlr-output-damage
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-output-damage.scm"))
    (extension wlr.types.wlr-output-layout
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-output-layout.scm"))

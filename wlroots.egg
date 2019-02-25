@@ -52,6 +52,9 @@
    (extension wlr.types.wlr-pointer
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-pointer.scm"))
+   (extension wlr.types.wlr-region
+     (custom-build "custom-build.scm")
+     (source "src/wlr/types/wlr-region.scm"))
    (extension wlr.types.wlr-seat
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-seat.scm"))
@@ -75,6 +78,9 @@
    (extension wlr.util.log
      (custom-build "custom-build.scm")
      (source "src/wlr/util/log.scm"))
+   (extension wlr.util.region
+     (custom-build "custom-build.scm")
+     (source "src/wlr/util/region.scm"))
    ; XXX: build all wayland protocols at once because we
    ;      can't pass arguments to a custom-build script
    (generated-source-file wayland-protocols

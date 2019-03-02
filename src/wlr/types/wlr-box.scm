@@ -60,9 +60,9 @@
         box)))
 
   (define (wlr-box-intersection a b)
-    (let ((box (make-wlr-box 0 0 0 0)))
-      (%wlr-box-intersection box a b)
-      box))
+    (let* ((box (make-wlr-box 0 0 0 0))
+           (r (%wlr-box-intersection box a b)))
+      (values r box)))
 
   (define (wlr-box-transform box transform width height)
     (let ((dst (make-wlr-box 0 0 0 0)))

@@ -249,6 +249,7 @@
 (define-foreign-type wlr-button-state (enum "wlr_button_state"))
 (define-foreign-type wlr-data-offer-type (enum "wlr_data_offer_type"))
 (define-foreign-type wlr-direction (enum "wlr_direction"))
+(define-foreign-type wlr-drag-grab-type (enum "wlr_drag_grab_type"))
 (define-foreign-type wlr-edges (enum "wlr_edges"))
 (define-foreign-type wlr-input-device-type (enum "wlr_input_device_type"))
 (define-foreign-type wlr-key-state (enum "wlr_key_state"))

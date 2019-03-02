@@ -110,7 +110,6 @@
          wlr-seat-global
          wlr-seat-display
          wlr-seat-clients
-         wlr-seat-drag-icons
          wlr-seat-name
          wlr-seat-capabilities
          wlr-seat-last-event
@@ -141,8 +140,8 @@
          wlr-seat-events-set-selection
          wlr-seat-events-request-set-primary-selection
          wlr-seat-events-set-primary-selection
+         wlr-seat-events-request-start-drag
          wlr-seat-events-start-drag
-         wlr-seat-events-new-drag-icon
          wlr-seat-events-destroy
          wlr-seat-data
 
@@ -157,6 +156,10 @@
 
          wlr-seat-request-set-primary-selection-event-source
          wlr-seat-request-set-primary-selection-event-serial
+
+         wlr-seat-request-start-drag-event-drag
+         wlr-seat-request-start-drag-event-origin
+         wlr-seat-request-start-drag-event-serial
 
          wlr-seat-pointer-focus-change-event-seat
          wlr-seat-pointer-focus-change-event-old-surface
@@ -214,6 +217,8 @@
          wlr-seat-touch-num-points
          wlr-seat-touch-has-grab?
          wlr-seat-validate-grab-serial
+         wlr-seat-validate-pointer-grab-serial
+         wlr-seat-validate-touch-grab-serial
          wlr-seat-client-from-resource
          wlr-seat-client-from-pointer-resource)
   (import (scheme)
@@ -319,7 +324,6 @@
 
   (define-foreign-record-type (wlr-seat* "struct wlr_seat")
     ((struct "wl_list") clients wlr-seat-clients)
-    ((struct "wl_list") drag_icons wlr-seat-drag-icons)
     ((struct "timespec") last_event wlr-seat-last-event)
     ((struct "wl_list") selection_offers wlr-seat-selection-offers)
     ((struct "wl_list") drag_offers wlr-seat-drag-offers)
@@ -343,8 +347,8 @@
     ((struct "wl_signal") events.request_set_primary_selection
                           wlr-seat-events-request-set-primary-selection)
     ((struct "wl_signal") events.set_primary_selection wlr-seat-events-set-primary-selection)
+    ((struct "wl_signal") events.request_start_drag wlr-seat-events-request-start-drag)
     ((struct "wl_signal") events.start_drag wlr-seat-events-start-drag)
-    ((struct "wl_signal") events.new_drag_icon wlr-seat-events-new-drag-icon)
     ((struct "wl_signal") events.destroy wlr-seat-events-destroy))
   
   (define wlr-seat-pointer-surface-has-focus? wlr-seat-pointer-surface-has-focus)

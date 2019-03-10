@@ -433,6 +433,10 @@
                                 (wlr-event-pointer-axis-delta-discrete event)
                                 (wlr-event-pointer-axis-source event)))
 
+; This event is forwarded by the cursor when a pointer emits a frame
+; event. Frame events are sent after regular pointer events to group
+; multiple events together. For instance, two axis events may happen at the
+; same time, in which case a frame event won't be sent in between.
 (define (server-cursor-frame server)
   (wlr-seat-pointer-notify-frame (server:seat server)))
 

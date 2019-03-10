@@ -12,7 +12,6 @@ struct wlr_xwayland {
 	pid_t pid;
 	struct wl_client *client;
 	struct wl_event_source *sigusr1_source;
-//	struct wl_listener client_destroy;
 	struct wlr_xwm *xwm;
 	struct wlr_xwayland_cursor *cursor;
 //	int wm_fd[2], wl_fd[2];
@@ -22,9 +21,9 @@ struct wlr_xwayland {
 	/* Anything above display is reset on Xwayland restart, rest is conserved */
 
 	int display;
+//	char display_name[16];
 //	int x_fd[2];
 //	struct wl_event_source *x_fd_read_event[2];
-//	struct wl_listener display_destroy;
 
 	bool lazy;
 
@@ -37,14 +36,16 @@ struct wlr_xwayland {
 //		struct wl_signal new_surface;
 //	} events;
 
-//	struct wl_listener seat_destroy;
-
 	/**
 	 * Add a custom event handler to xwayland. Return 1 if the event was
 	 * handled or 0 to use the default wlr-xwayland handler. wlr-xwayland will
 	 * free the event.
 	 */
 //	int (*user_event_handler)(struct wlr_xwm *xwm, /*xcb_generic_event_t*/ void *event);
+
+//	struct wl_listener client_destroy;
+//	struct wl_listener display_destroy;
+//	struct wl_listener seat_destroy;
 
 	void *data;
 };

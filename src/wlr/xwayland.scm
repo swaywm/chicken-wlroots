@@ -26,22 +26,23 @@
          wlr-xwayland-pid
          wlr-xwayland-client
          wlr-xwayland-sigusr1-source
-         wlr-xwayland-client-destroy
          wlr-xwayland-xwm
          wlr-xwayland-cursor
          wlr-xwayland-wm-fd
          wlr-xwayland-wl-fd
          wlr-xwayland-server-start
          wlr-xwayland-display
+         wlr-xwayland-display-name
          wlr-xwayland-x-fd
          wlr-xwayland-x-fd-read-event
-         wlr-xwayland-display-destroy
          wlr-xwayland-lazy?
          wlr-xwayland-wl-display
          wlr-xwayland-compositor
          wlr-xwayland-seat
          wlr-xwayland-events-ready
          wlr-xwayland-events-new-surface
+         wlr-xwayland-client-destroy
+         wlr-xwayland-display-destroy
          wlr-xwayland-seat-destroy
          ;wlr-xwayland-user-event-handler ;FIXME: scheme interface
          wlr-xwayland-data
@@ -178,10 +179,11 @@
   (define wlr-xwayland-surface-has-alpha? wlr-xwayland-surface-has-alpha)
 
   (define-foreign-record-type (wlr-xwayland* "struct wlr_xwayland")
-    ((struct "wl_listener") client_destroy wlr-xwayland-client-destroy)
-    ((struct "wl_listener") display_destroy wlr-xwayland-display-destroy)
+    (c-string display_name wlr-xwayland-display-name)
     ((struct "wl_signal") events.ready wlr-xwayland-events-ready)
     ((struct "wl_signal") events.new_surface wlr-xwayland-events-new-surface)
+    ((struct "wl_listener") client_destroy wlr-xwayland-client-destroy)
+    ((struct "wl_listener") display_destroy wlr-xwayland-display-destroy)
     ((struct "wl_listener") seat_destroy wlr-xwayland-seat-destroy))
 
   ; XXX: unsafe

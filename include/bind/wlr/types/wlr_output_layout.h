@@ -68,8 +68,8 @@ bool wlr_output_layout_intersects(struct wlr_output_layout *layout,
  * output. If reference is NULL, gets the closest point from the entire layout.
  */
 void wlr_output_layout_closest_point(struct wlr_output_layout *layout,
-		struct wlr_output *reference, double lx, double ly, double *dest_lx,
-		double *dest_ly);
+		struct wlr_output *reference, double lx, double ly,
+		___out double *dest_lx, ___out double *dest_ly);
 
 /**
  * Get the box of the layout for the given reference output in layout

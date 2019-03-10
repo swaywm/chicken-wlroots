@@ -244,6 +244,31 @@
 (define-foreign-type wlr-xdg-toplevel-state (struct "wlr_xdg_toplevel_state"))
 (define-foreign-type wlr-xdg-toplevel-state* (c-pointer wlr-xdg-toplevel-state))
 
+(define-foreign-type wlr-xwayland (struct "wlr_xwayland"))
+(define-foreign-type wlr-xwayland* (c-pointer wlr-xwayland))
+
+(define-foreign-type wlr-xwayland-surface-hints (struct "wlr_xwayland_surface_hints"))
+(define-foreign-type wlr-xwayland-surface-hints* (c-pointer wlr-xwayland-surface-hints))
+
+(define-foreign-type wlr-xwayland-surface-size-hints
+                     (struct "wlr_xwayland_surface_size_hints"))
+(define-foreign-type wlr-xwayland-surface-size-hints*
+                     (c-pointer wlr-xwayland-surface-size-hints))
+
+(define-foreign-type wlr-xwayland-surface (struct "wlr_xwayland_surface"))
+(define-foreign-type wlr-xwayland-surface* (c-pointer wlr-xwayland-surface))
+
+(define-foreign-type wlr-xwayland-surface-configure-event
+                     (struct "wlr_xwayland_surface_configure_event"))
+(define-foreign-type wlr-xwayland-surface-configure-event*
+                     (c-pointer wlr-xwayland-surface-configure-event))
+
+(define-foreign-type wlr-xwayland-move-event (struct "wlr_xwayland_move_event"))
+(define-foreign-type wlr-xwayland-move-event* (c-pointer wlr-xwayland-move-event))
+
+(define-foreign-type wlr-xwayland-resize-event (struct "wlr_xwayland_resize_event"))
+(define-foreign-type wlr-xwayland-resize-event* (c-pointer wlr-xwayland-resize-event))
+
 (define-foreign-type wlr-axis-orientation (enum "wlr_axis_orientation"))
 (define-foreign-type wlr-axis-source (enum "wlr_axis_source"))
 (define-foreign-type wlr-button-state (enum "wlr_button_state"))
@@ -263,6 +288,8 @@
 (define-foreign-type wlr-tablet-tool-tip-state (enum "wlr_tablet_tool_tip_state"))
 (define-foreign-type wlr-tablet-tool-type (enum "wlr_tablet_tool_type"))
 (define-foreign-type wlr-xdg-surface-role (enum "wlr_xdg_surface_role"))
+(define-foreign-type wlr-xwayland-surface-decorations
+                     (enum "wlr_xwayland_surface_decorations"))
 
 (define-foreign-type wlr-matrix (c-pointer float)) ; float[9]
 (define-foreign-type wlr-rgba (c-pointer float))   ; float[4]

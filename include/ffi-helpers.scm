@@ -37,10 +37,14 @@
 (bind-type "wlr_rgba" (c-pointer float))
 (bind-type "uint32_ptr" (c-pointer unsigned-int32))
 
+(bind-type "int16_t" short)
+(bind-type "uint16_t" unsigned-short)
+
 ; FIXME: use configure script to determine correct size
 (bind-type "pid_t" int32)
 (bind-type "uid_t" unsigned-int32)
 (bind-type "gid_t" unsigned-int32)
+(bind-type "time_t" unsigned-integer64)
 
 (bind-type "EGLint" int32)
 (bind-type "EGLint_ptr" (c-pointer int32))

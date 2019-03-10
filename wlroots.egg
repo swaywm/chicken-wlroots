@@ -41,6 +41,7 @@
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-matrix.scm"))
    (extension wlr.types.wlr-output-damage
+     (csc-options "-C" "-Wno-incompatible-pointer-types")
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-output-damage.scm"))
    (extension wlr.types.wlr-output-layout
@@ -81,6 +82,9 @@
    (extension wlr.util.region
      (custom-build "custom-build.scm")
      (source "src/wlr/util/region.scm"))
+   (extension wlr.xwayland
+     (custom-build "custom-build.scm")
+     (source "src/wlr/xwayland.scm"))
    ; XXX: build all wayland protocols at once because we
    ;      can't pass arguments to a custom-build script
    (generated-source-file wayland-protocols

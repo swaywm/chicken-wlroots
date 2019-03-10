@@ -83,7 +83,7 @@
      (custom-build "custom-build.scm")
      (source "src/wlr/util/region.scm"))
    (extension wlr.xwayland
-     (custom-build "custom-build.scm")
+     (custom-build "xwayland.custom-build.scm")
      (source "src/wlr/xwayland.scm"))
    ; XXX: build all wayland protocols at once because we
    ;      can't pass arguments to a custom-build script

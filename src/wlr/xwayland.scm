@@ -18,6 +18,10 @@
 ;; FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 ;; IN THE SOFTWARE.
 
+; wlroots may be compiled without xwayland, so we need to allow disabling it.
+(cond-expand
+(xwayland
+
 (foreign-declare "#include <wlr/xwayland.h>")
 (include "wlroots-types.scm")
 
@@ -247,4 +251,6 @@
         "C_return(surface->class);")
       ; XXX: will GC break this?
       (foreign-lambda* void ((wlr-xwayland-surface* surface) (c-string str))
-        "surface->class = str;"))))
+        "surface->class = str;")))))
+
+(else (module (wlr xwayland) ())))

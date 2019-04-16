@@ -26,7 +26,7 @@
          wlr-backend-events-new-input
          wlr-backend-events-new-output
          wlr-backend-autocreate
-         wlr-backend-start 
+         wlr-backend-start
          wlr-backend-destroy
          wlr-backend-get-renderer
          wlr-backend-get-session

@@ -22,7 +22,20 @@
 (include "wlroots-types.scm")
 
 (module (wlr types wlr-output-layout)
-        (wlr-output-layout-create
+        (wlr-output-layout-outputs ; TODO: return as scheme list
+         wlr-output-layout-state
+         wlr-output-layout-events-add
+         wlr-output-layout-events-change
+         wlr-output-layout-events-destroy
+         wlr-output-layout-data
+         wlr-output-layout-output-output
+         wlr-output-layout-output-x
+         wlr-output-layout-output-y
+         wlr-output-layout-output-link
+         wlr-output-layout-output-state
+         wlr-output-layout-output-events-destroy
+
+         wlr-output-layout-create
          wlr-output-layout-destroy
          wlr-output-layout-get
          wlr-output-layout-output-at

@@ -19,15 +19,18 @@ modules   = slib.getopt \
             wlr.types.wlr-matrix \
             wlr.types.wlr-pointer \
             wlr.types.wlr-output \
-	    wlr.types.wlr-output-damage \
+            wlr.types.wlr-output-damage \
             wlr.types.wlr-output-layout \
+            wlr.types.wlr-region \
             wlr.types.wlr-seat \
             wlr.types.wlr-surface \
             wlr.types.wlr-tablet-tool \
             wlr.types.wlr-xcursor-manager \
             wlr.types.wlr-xdg-shell \
             wlr.util.edges \
-            wlr.util.log
+            wlr.util.log \
+            wlr.util.region \
+            wlr.xwayland
 
 clean = $(addsuffix .o,$(modules) $(protocols) $(addprefix examples.,$(examples))) $(examples) \
         $(addsuffix .import.scm,$(modules)) \

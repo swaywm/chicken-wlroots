@@ -2,6 +2,7 @@ struct wlr_output_mode {
 	uint32_t flags; // enum wl_output_mode
 	int32_t width, height;
 	int32_t refresh; // mHz
+  bool preferred;
 //	struct wl_list link;
 };
 
@@ -53,7 +54,7 @@ struct wlr_output {
 	int32_t phys_width, phys_height; // mm
 
 	// Note: some backends may have zero modes
-//	struct wl_list modes;
+//	struct wl_list modes; // wlr_output_mode::link
 	struct wlr_output_mode *current_mode;
 	int32_t width, height;
 	int32_t refresh; // mHz, may be zero
@@ -91,9 +92,6 @@ struct wlr_output {
 //	struct wl_list cursors; // wlr_output_cursor::link
 	struct wlr_output_cursor *hardware_cursor;
 	int software_cursor_locks; // number of locks forcing software cursors
-
-	// the output position in layout space reported to clients
-	int32_t lx, ly;
 
 //	struct wl_listener display_destroy;
 
@@ -154,7 +152,6 @@ bool wlr_output_set_custom_mode(struct wlr_output *output, int32_t width,
 	int32_t height, int32_t refresh);
 void wlr_output_set_transform(struct wlr_output *output,
 	enum wl_output_transform transform);
-void wlr_output_set_position(struct wlr_output *output, int32_t lx, int32_t ly);
 void wlr_output_set_scale(struct wlr_output *output, float scale);
 void wlr_output_set_subpixel(struct wlr_output *output, enum wl_output_subpixel subpixel);
 void wlr_output_destroy(struct wlr_output *output);

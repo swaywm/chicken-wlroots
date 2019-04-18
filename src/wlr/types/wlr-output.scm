@@ -81,8 +81,6 @@
          wlr-output-cursors
          wlr-output-hardware-cursor
          wlr-output-software-cursor-locks
-         wlr-output-lx
-         wlr-output-ly
          wlr-output-display-destroy
          wlr-output-data
 
@@ -107,7 +105,6 @@
          wlr-output-set-mode
          wlr-output-set-custom-mode
          wlr-output-set-transform
-         wlr-output-set-position
          wlr-output-set-scale
          wlr-output-set-subpixel
          wlr-output-destroy

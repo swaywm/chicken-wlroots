@@ -94,6 +94,8 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-xdg-toplevel-state-max-height
          wlr-xdg-toplevel-state-min-width
          wlr-xdg-toplevel-state-min-height
+         wlr-xdg-toplevel-state-fullscreen-output
+         wlr-xdg-toplevel-state-fullscreen-output-destroy
 
          wlr-xdg-toplevel-resource
          wlr-xdg-toplevel-base
@@ -238,6 +240,9 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
     (wlr-xdg-surface-role/none     "WLR_XDG_SURFACE_ROLE_NONE")
     (wlr-xdg-surface-role/toplevel "WLR_XDG_SURFACE_ROLE_TOPLEVEL")
     (wlr-xdg-surface-role/popup    "WLR_XDG_SURFACE_ROLE_POPUP"))
+
+  (define-foreign-record-type (wlr-xdg-toplevel-state* "struct wlr_xdg_toplevel_state")
+    ((struct "wl_listener") fullscreen_output_destroy wlr-xdg-toplevel-state-fullscreen-output-destroy))
 
   (define-foreign-record-type (wlr-xdg-toplevel* "struct wlr_xdg_toplevel")
     ((struct "wlr_xdg_toplevel_state") client_pending wlr-xdg-toplevel-client-pending)

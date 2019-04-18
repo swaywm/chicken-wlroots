@@ -43,7 +43,7 @@
          wlr-input-device-_device
          wlr-input-device-keyboard
          wlr-input-device-pointer
-         wlr-input-device-lid-switch
+         wlr-input-device-switch-device
          wlr-input-device-touch
          wlr-input-device-tablet
          wlr-input-device-tablet-pad
@@ -72,7 +72,7 @@
     (c-pointer _device wlr-input-device-_device)
     ((c-pointer (struct "wlr_keyboard")) keyboard wlr-input-device-keyboard)
     ((c-pointer (struct "wlr_pointer")) pointer wlr-input-device-pointer)
-    ((c-pointer (struct "wlr_switch")) lid_switch wlr-input-device-lid-switch)
+    ((c-pointer (struct "wlr_switch")) switch_device wlr-input-device-switch-device)
     ((c-pointer (struct "wlr_touch")) touch wlr-input-device-touch)
     ((c-pointer (struct "wlr_tablet")) tablet wlr-input-device-tablet)
     ((c-pointer (struct "wlr_tablet_pad")) tablet_pad wlr-input-device-tablet-pad)

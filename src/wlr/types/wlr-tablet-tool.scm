@@ -29,6 +29,7 @@
          wlr-tablet-tool-type/airbrush
          wlr-tablet-tool-type/mouse
          wlr-tablet-tool-type/lens
+         wlr-tablet-tool-type/totem
 
          wlr-tablet-tool-type
          wlr-tablet-tool-hardware-serial
@@ -115,7 +116,8 @@
     (wlr-tablet-tool-type/pencil   "WLR_TABLET_TOOL_TYPE_PENCIL")
     (wlr-tablet-tool-type/airbrush "WLR_TABLET_TOOL_TYPE_AIRBRUSH")
     (wlr-tablet-tool-type/mouse    "WLR_TABLET_TOOL_TYPE_MOUSE")
-    (wlr-tablet-tool-type/lens     "WLR_TABLET_TOOL_TYPE_LENS"))
+    (wlr-tablet-tool-type/lens     "WLR_TABLET_TOOL_TYPE_LENS")
+    (wlr-tablet-tool-type/totem    "WLR_TABLET_TOOL_TYPE_TOTEM"))
 
   (define-foreign-record-type (wlr-tablet-tool* "struct wlr_tablet_tool")
     ((struct "wl_signal") events.destroy wlr-tablet-tool-events-destroy))

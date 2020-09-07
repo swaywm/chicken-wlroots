@@ -34,20 +34,24 @@
          wlr-output-damage-output-mode
          wlr-output-damage-output-transform
          wlr-output-damage-output-scale
-         wlr-output-damage-output-needs-swap
+         wlr-output-damage-output-needs-frame
+         wlr-output-damage-output-damage
          wlr-output-damage-output-frame
+         wlr-output-damage-output-commit
 
          wlr-output-damage-create
          wlr-output-damage-destroy
-         wlr-output-damage-make-current
-         wlr-output-damage-swap-buffers
+         wlr-output-damage-attach-render
          wlr-output-damage-add
          wlr-output-damage-add-whole
          wlr-output-damage-add-box)
   (import (scheme)
-          (chicken base))
+          (chicken base)
+          (chicken gc) 
+          (chicken memory))
   (include "ffi-helpers.scm")
 
+  (bind-rename wlr_output_damage_attach_render %wlr-output-damage-attach-render)
   (bind-file "include/bind/wlr/types/wlr_output_damage.h")
 
   (define-foreign-record-type (wlr-output-damage* "struct wlr_output_damage")
@@ -59,8 +63,10 @@
     ((struct "wl_listener") output_mode wlr-output-damage-output-mode)
     ((struct "wl_listener") output_transform wlr-output-damage-output-transform)
     ((struct "wl_listener") output_scale wlr-output-damage-output-scale)
-    ((struct "wl_listener") output_needs_swap wlr-output-damage-output-needs-swap)
-    ((struct "wl_listener") output_frame wlr-output-damage-output-frame))
+    ((struct "wl_listener") output_needs_frame wlr-output-damage-output-needs-frame)
+    ((struct "wl_listener") output_damage wlr-output-damage-output-damage)
+    ((struct "wl_listener") output_frame wlr-output-damage-output-frame)
+    ((struct "wl_listener") output_commit wlr-output-damage-output-commit))
 
   (define (wlr-output-damage-previous damage #!optional idx)
     (if idx
@@ -68,4 +74,11 @@
                         (((c-pointer (struct "pixman_region32")) damage) (int idx))
          "C_return(damage+idx);")
         (%wlr-output-damage-previous damage) idx)
-      (%wlr-output-damage-previous damage))))
+      (%wlr-output-damage-previous damage)))
+  
+  (define (wlr-output-damage-attach-render output-damage)
+    (let ((buffer-damage (allocate (foreign-type-size pixman-region32))))
+      (set-finalizer! buffer-damage free)
+      (let-location ((needs-frame bool))
+        (let ((rval (%wlr-output-damage-attach-render output-damage needs-frame (location buffer-damage))))
+          (values rval needs-frame buffer-damage))))))

@@ -45,6 +45,7 @@
          wlr-keyboard-modifiers-group
 
          wlr-keyboard-impl
+         wlr-keyboard-group
          wlr-keyboard-keymap-string
          wlr-keyboard-keymap-size
          wlr-keyboard-keymap
@@ -60,6 +61,7 @@
          wlr-keyboard-events-modifiers
          wlr-keyboard-events-keymap
          wlr-keyboard-events-repeat-info
+         wlr-keyboard-events-destroy
          wlr-keyboard-data
 
          wlr-key/released
@@ -71,6 +73,7 @@
          wlr-event-keyboard-key-state
 
          wlr-keyboard-set-keymap
+         wlr-keyboard-keymaps-match?
          wlr-keyboard-set-repeat-info
          wlr-keyboard-led-update
          wlr-keyboard-get-modifiers)
@@ -79,6 +82,7 @@
   (include "ffi-helpers.scm")
 
   (bind-file "include/bind/wlr/types/wlr_keyboard.h")
+  (define wlr-keyboard-keymaps-match? wlr-keyboard-keymaps-match)
 
   (define-foreign-type xkb-mod-mask unsigned-int32)
   (define-foreign-type xkb-led-index unsigned-int32)
@@ -115,7 +119,8 @@
     ((struct "wl_signal") events.key wlr-keyboard-events-key)
     ((struct "wl_signal") events.modifiers wlr-keyboard-events-modifiers)
     ((struct "wl_signal") events.keymap wlr-keyboard-events-keymap)
-    ((struct "wl_signal") events.repeat_info wlr-keyboard-events-repeat-info))
+    ((struct "wl_signal") events.repeat_info wlr-keyboard-events-repeat-info)
+    ((struct "wl_signal") events.destroy wlr-keyboard-events-destroy))
 
   (define wlr-keyboard-led-indexes
     (case-lambda

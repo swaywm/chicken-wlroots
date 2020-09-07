@@ -7,6 +7,7 @@
 //	WLR_SURFACE_STATE_TRANSFORM = 1 << 5,
 //	WLR_SURFACE_STATE_SCALE = 1 << 6,
 //	WLR_SURFACE_STATE_FRAME_CALLBACK_LIST = 1 << 7,
+//	WLR_SURFACE_STATE_VIEWPORT = 1 << 8,
 //};
 
 struct wlr_surface_state {
@@ -22,6 +23,21 @@ struct wlr_surface_state {
 
 	int width, height; // in surface-local coordinates
 	int buffer_width, buffer_height;
+
+	/**
+	 * The viewport is applied after the surface transform and scale.
+	 *
+	 * If has_src is true, the surface content is cropped to the provided
+	 * rectangle. If has_dst is true, the surface content is scaled to the
+	 * provided rectangle.
+	 */
+//	struct {
+//		bool has_src, has_dst;
+//		// In coordinates after scale/transform are applied, but before the
+//		// destination rectangle is applied
+//		struct wlr_fbox src;
+//		int dst_width, dst_height; // in surface-local coordinates
+//	} viewport;
 
 //	struct wl_listener buffer_destroy;
 };
@@ -41,7 +57,7 @@ struct wlr_surface {
 	 * have a buffer if it has never committed one, has committed a null buffer,
 	 * or something went wrong with uploading the buffer.
 	 */
-	struct wlr_buffer *buffer;
+	struct wlr_client_buffer *buffer;
 	/**
 	 * The buffer position, in surface-local units.
 	 */
@@ -202,7 +218,6 @@ void wlr_surface_send_leave(struct wlr_surface *surface,
 void wlr_surface_send_frame_done(struct wlr_surface *surface,
 		const struct timespec *when);
 
-struct wlr_box;
 /**
  * Get the bounding box that contains the surface and all subsurfaces in
  * surface coordinates.
@@ -227,3 +242,14 @@ struct wlr_surface *wlr_surface_from_resource(struct wl_resource *resource);
  */
 void wlr_surface_get_effective_damage(struct wlr_surface *surface,
 	pixman_region32_t *damage);
+
+/**
+ * Get the source rectangle describing the region of the buffer that needs to
+ * be sampled to render this surface's current state. The box is in
+ * buffer-local coordinates.
+ *
+ * If the viewport's source rectangle is unset, the position is zero and the
+ * size is the buffer's.
+ */
+void wlr_surface_get_buffer_source_box(struct wlr_surface *surface,
+	struct wlr_fbox *box);

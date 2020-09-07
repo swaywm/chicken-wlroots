@@ -27,28 +27,42 @@
 
 (module (wlr xwayland)
         (; struct wlr_xwayland
-         wlr-xwayland-pid
-         wlr-xwayland-client
-         wlr-xwayland-sigusr1-source
+         wlr-xwayland-server-pid
+         wlr-xwayland-server-client
+         wlr-xwayland-server-sigusr1-source
+         wlr-xwayland-server-wm-fd
+         wlr-xwayland-server-wl-fd
+         wlr-xwayland-server-server-start
+         wlr-xwayland-server-display
+         wlr-xwayland-server-display-name
+         wlr-xwayland-server-x-fd
+         wlr-xwayland-server-x-fd-read-event
+         wlr-xwayland-server-lazy?
+         wlr-xwayland-server-enable-wm?
+         wlr-xwayland-server-wl-display
+         wlr-xwayland-server-events-ready
+         wlr-xwayland-server-events-destroy
+         wlr-xwayland-server-client-destroy
+         wlr-xwayland-server-display-destroy
+         wlr-xwayland-server-data
+         wlr-xwayland-server-options-lazy?
+         wlr-xwayland-server-options-enable-wm?
+         wlr-xwayland-server-ready-event-server
+         wlr-xwayland-server-ready-event-wm-fd
+         wlr-xwayland-server
          wlr-xwayland-xwm
          wlr-xwayland-cursor
-         wlr-xwayland-wm-fd
-         wlr-xwayland-wl-fd
-         wlr-xwayland-server-start
-         wlr-xwayland-display
          wlr-xwayland-display-name
-         wlr-xwayland-x-fd
-         wlr-xwayland-x-fd-read-event
-         wlr-xwayland-lazy?
          wlr-xwayland-wl-display
          wlr-xwayland-compositor
          wlr-xwayland-seat
          wlr-xwayland-events-ready
          wlr-xwayland-events-new-surface
-         wlr-xwayland-client-destroy
-         wlr-xwayland-display-destroy
-         wlr-xwayland-seat-destroy
          ;wlr-xwayland-user-event-handler ;FIXME: scheme interface
+         wlr-xwayland-server-ready
+         wlr-xwayland-server-destroy
+         wlr-xwayland-client-destroy
+         wlr-xwayland-seat-destroy
          wlr-xwayland-data
          ; enum wlr_xwayland_surface_decorations
          wlr-xwayland-surface-decorations/all
@@ -149,11 +163,14 @@
          wlr-xwayland-surface-configure-event-y
          wlr-xwayland-surface-configure-event-width
          wlr-xwayland-surface-configure-event-height
+         wlr-xwayland-surface-configure-event-mask
          ; struct wlr_xwayland_move_event
          wlr-xwayland-move-event-surface
          wlr-xwayland-resize-event-surface
          wlr-xwayland-resize-event-edges
          ; functions
+         wlr-xwayland-server-create
+         wlr-xwayland-server-destroy
          wlr-xwayland-create
          wlr-xwayland-destroy
          wlr-xwayland-set-cursor
@@ -174,7 +191,10 @@
   (bind-rename wlr_surface_is_xwayland_surface wlr-surface-is-xwayland-surface?)
   (bind-rename wlr_xwayland_or_surface_wants_focus wlr-xwayland-or-surface-wants-focus?)
   (bind-file "include/bind/wlr/xwayland.h")
-  (define wlr-xwayland-lazy? wlr-xwayland-lazy)
+  (define wlr-xwayland-server-lazy? wlr-xwayland-server-lazy)
+  (define wlr-xwayland-server-enable-wm? wlr-xwayland-server-enable-wm)
+  (define wlr-xwayland-server-options-lazy? wlr-xwayland-server-options-lazy)
+  (define wlr-xwayland-server-options-enable-wm? wlr-xwayland-server-options-enable-wm)
   (define wlr-xwayland-surface-pinging? wlr-xwayland-surface-pinging)
   (define wlr-xwayland-surface-modal? wlr-xwayland-surface-modal)
   (define wlr-xwayland-surface-fullscreen? wlr-xwayland-surface-fullscreen)
@@ -182,32 +202,39 @@
   (define wlr-xwayland-surface-maximized-horz? wlr-xwayland-surface-maximized-horz)
   (define wlr-xwayland-surface-has-alpha? wlr-xwayland-surface-has-alpha)
 
+  (define-foreign-record-type (wlr-xwayland-server* "struct wlr_xwayland_server")
+    (c-string display_name wlr-xwayland-server-display-name)
+    ((struct "wl_signal") events.ready wlr-xwayland-server-events-ready)
+    ((struct "wl_signal") events.destroy wlr-xwayland-server-events-destroy)
+    ((struct "wl_listener") client_destroy wlr-xwayland-server-client-destroy)
+    ((struct "wl_listener") display_destroy wlr-xwayland-server-display-destroy))
+
   (define-foreign-record-type (wlr-xwayland* "struct wlr_xwayland")
-    (c-string display_name wlr-xwayland-display-name)
     ((struct "wl_signal") events.ready wlr-xwayland-events-ready)
     ((struct "wl_signal") events.new_surface wlr-xwayland-events-new-surface)
+    ((struct "wl_listener") server_ready wlr-xwayland-server-ready)
+    ((struct "wl_listener") server_destroy wlr-xwayland-server-destroy)
     ((struct "wl_listener") client_destroy wlr-xwayland-client-destroy)
-    ((struct "wl_listener") display_destroy wlr-xwayland-display-destroy)
     ((struct "wl_listener") seat_destroy wlr-xwayland-seat-destroy))
 
   ; XXX: unsafe
-  (define wlr-xwayland-wm-fd
-    (foreign-lambda* int ((wlr-xwayland* obj) (int i))
+  (define wlr-xwayland-server-wm-fd
+    (foreign-lambda* int ((wlr-xwayland-server* obj) (int i))
       "C_return(obj->wm_fd[i]);"))
 
   ; XXX: unsafe
-  (define wlr-xwayland-wl-fd
-    (foreign-lambda* int ((wlr-xwayland* obj) (int i))
+  (define wlr-xwayland-server-wl-fd
+    (foreign-lambda* int ((wlr-xwayland-server* obj) (int i))
       "C_return(obj->wl_fd[i]);"))
 
   ; XXX: unsafe
-  (define wlr-xwayland-x-fd
-    (foreign-lambda* int ((wlr-xwayland* obj) (int i))
+  (define wlr-xwayland-server-x-fd
+    (foreign-lambda* int ((wlr-xwayland-server* obj) (int i))
       "C_return(obj->x_fd[i]);"))
 
   ; XXX: unsafe
-  (define wlr-xwayland-x-fd-read-event
-    (foreign-lambda* wl-event-source* ((wlr-xwayland* obj) (int i))
+  (define wlr-xwayland-server-x-fd-read-event
+    (foreign-lambda* wl-event-source* ((wlr-xwayland-server* obj) (int i))
       "C_return(obj->x_fd_read_event[i]);"))
 
   (define-foreign-values wlr-xwayland-surface-decorations

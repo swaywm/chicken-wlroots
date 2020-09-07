@@ -129,7 +129,7 @@
 
   (define (%wlr-log verb line fmt . args)
     ((foreign-safe-lambda* void ((wlr-log-importance verb) (c-string str))
-       "_wlr_log(verb, str);")
+       "_wlr_log(verb, \"%s\", str);")
       verb
       (sanitize-format (string-append (if line (format "[~a] " line) "[?] ")
                                       (apply format fmt args))))))

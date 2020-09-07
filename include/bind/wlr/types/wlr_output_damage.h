@@ -32,27 +32,25 @@ struct wlr_output_damage {
 //	struct wl_listener output_mode;
 //	struct wl_listener output_transform;
 //	struct wl_listener output_scale;
-//	struct wl_listener output_needs_swap;
+//	struct wl_listener output_needs_frame;
+//	struct wl_listener output_damage;
 //	struct wl_listener output_frame;
+//	struct wl_listener output_commit;
 };
 
 struct wlr_output_damage *wlr_output_damage_create(struct wlr_output *output);
 void wlr_output_damage_destroy(struct wlr_output_damage *output_damage);
 /**
- * Makes the output rendering context current. `needs_swap` is set to true if
- * `wlr_output_damage_swap_buffers` needs to be called. The region of the output
- * that needs to be repainted is added to `damage`.
- */
-bool wlr_output_damage_make_current(struct wlr_output_damage *output_damage,
-	___out bool *needs_swap, pixman_region32_t *damage);
-/**
- * Swaps the output buffers. If the time of the frame isn't known, set `when` to
- * NULL.
+ * Attach the renderer's buffer to the output. Compositors must call this
+ * function before rendering. After they are done rendering, they should call
+ * `wlr_output_set_damage` and `wlr_output_commit` to submit the new frame.
  *
- * Swapping buffers schedules a `frame` event.
+ * `needs_frame` will be set to true if a frame should be submitted. `damage`
+ * will be set to the region of the output that needs to be repainted, in
+ * output-buffer-local coordinates.
  */
-bool wlr_output_damage_swap_buffers(struct wlr_output_damage *output_damage,
-	struct timespec *when, pixman_region32_t *damage);
+bool wlr_output_damage_attach_render(struct wlr_output_damage *output_damage,
+	bool *needs_frame, pixman_region32_t *buffer_damage);
 /**
  * Accumulates damage and schedules a `frame` event.
  */

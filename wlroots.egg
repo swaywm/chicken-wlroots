@@ -72,6 +72,7 @@
      (custom-build "custom-build.scm")
      (source "src/wlr/types/wlr-xdg-shell.scm")
      (component-dependencies wlr.types.wlr-box
+                             wlr.types.wlr-surface
                              wayland-protocols))
    (extension wlr.util.edges
      (custom-build "custom-build.scm")

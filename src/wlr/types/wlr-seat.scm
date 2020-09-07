@@ -22,7 +22,15 @@
 (include "wlroots-types.scm")
 
 (module (wlr types wlr-seat)
-        (wlr-seat-client-client
+        (wlr-serial-ringset-size
+         wlr-serial-range-min-incl
+         wlr-serial-range-max-incl
+
+         wlr-serial-ringset-data
+         wlr-serial-ringset-end
+         wlr-serial-ringset-count
+
+         wlr-seat-client-client
          wlr-seat-client-seat
          wlr-seat-client-link
          wlr-seat-client-resources
@@ -31,6 +39,7 @@
          wlr-seat-client-touches
          wlr-seat-client-data-devices
          wlr-seat-client-events-destroy
+         wlr-seat-client-serials
 
          wlr-touch-point-touch-id
          wlr-touch-point-surface
@@ -41,26 +50,29 @@
          wlr-touch-point-sy
          wlr-touch-point-surface-destroy
          wlr-touch-point-focus-surface-destroy
+         wlr-touch-point-client-destroy
          wlr-touch-point-events-destroy
          wlr-touch-point-link
 
-         wl-pointer-grab-interface-enter
-         wl-pointer-grab-interface-motion
-         wl-pointer-grab-interface-button
-         wl-pointer-grab-interface-axis
-         wl-pointer-grab-interface-frame
-         wl-pointer-grab-interface-cancel
+         wlr-pointer-grab-interface-enter
+         wlr-pointer-grab-interface-clear-focus
+         wlr-pointer-grab-interface-motion
+         wlr-pointer-grab-interface-button
+         wlr-pointer-grab-interface-axis
+         wlr-pointer-grab-interface-frame
+         wlr-pointer-grab-interface-cancel
 
-         wl-keyboard-grab-interface-enter
-         wl-keyboard-grab-interface-key
-         wl-keyboard-grab-interface-modifiers
-         wl-keyboard-grab-interface-cancel
+         wlr-keyboard-grab-interface-enter
+         wlr-keyboard-grab-interface-clear-focus
+         wlr-keyboard-grab-interface-key
+         wlr-keyboard-grab-interface-modifiers
+         wlr-keyboard-grab-interface-cancel
 
-         wl-touch-grab-interface-down
-         wl-touch-grab-interface-up
-         wl-touch-grab-interface-motion
-         wl-touch-grab-interface-enter
-         wl-touch-grab-interface-cancel
+         wlr-touch-grab-interface-down
+         wlr-touch-grab-interface-up
+         wlr-touch-grab-interface-motion
+         wlr-touch-grab-interface-enter
+         wlr-touch-grab-interface-cancel
 
          wlr-seat-touch-grab-interface
          wlr-seat-touch-grab-seat
@@ -74,6 +86,8 @@
          wlr-seat-pointer-grab-seat
          wlr-seat-pointer-grab-data
 
+         wlr-pointer-buttons-cap
+
          wlr-seat-pointer-state-seat
          wlr-seat-pointer-state-focused-client
          wlr-seat-pointer-state-focused-surface
@@ -81,6 +95,7 @@
          wlr-seat-pointer-state-sy
          wlr-seat-pointer-state-grab
          wlr-seat-pointer-state-default-grab
+         wlr-seat-pointer-state-buttons
          wlr-seat-pointer-state-button-count
          wlr-seat-pointer-state-grab-button
          wlr-seat-pointer-state-grab-serial
@@ -112,6 +127,7 @@
          wlr-seat-clients
          wlr-seat-name
          wlr-seat-capabilities
+         wlr-seat-accumulated-capabilities
          wlr-seat-last-event
          wlr-seat-selection-source
          wlr-seat-selection-serial
@@ -183,13 +199,15 @@
          wlr-seat-pointer-send-button
          wlr-seat-pointer-send-axis
          wlr-seat-pointer-send-frame
-         wlr-seat-pointer-start-grab
-         wlr-seat-pointer-end-grab
          wlr-seat-pointer-notify-enter
+         wlr-seat-pointer-notify-clear-focus
+         wlr-seat-pointer-warp
          wlr-seat-pointer-notify-motion
          wlr-seat-pointer-notify-button
          wlr-seat-pointer-notify-axis
          wlr-seat-pointer-notify-frame
+         wlr-seat-pointer-start-grab
+         wlr-seat-pointer-end-grab
          wlr-seat-pointer-has-grab?
          wlr-seat-set-keyboard
          wlr-seat-get-keyboard
@@ -200,6 +218,7 @@
          wlr-seat-keyboard-send-modifiers
          wlr-seat-keyboard-notify-modifiers
          wlr-seat-keyboard-notify-enter
+         wlr-seat-keyboard-notify-clear-focus
          wlr-seat-keyboard-enter
          wlr-seat-keyboard-clear-focus
          wlr-seat-keyboard-has-grab?
@@ -219,13 +238,21 @@
          wlr-seat-validate-grab-serial
          wlr-seat-validate-pointer-grab-serial
          wlr-seat-validate-touch-grab-serial
+         wlr-seat-client-next-serial
+         wlr-seat-client-validate-event-serial
          wlr-seat-client-from-resource
-         wlr-seat-client-from-pointer-resource)
+         wlr-seat-client-from-pointer-resource
+         wlr-surface-accepts-touch)
   (import (scheme)
           (chicken base))
   (include "ffi-helpers.scm")
 
   (bind-file "include/bind/wlr/types/wlr_seat.h")
+
+  ; XXX: unsafe
+  (define wlr-serial-ringset-data
+    (foreign-lambda* wlr-serial-range* ((wlr-serial-ringset* obj) (int i))
+      "C_return(&obj->data[i]);"))
 
   (define-foreign-record-type (wlr-seat-client* "struct wlr_seat_client")
     ((struct "wl_list") link wlr-seat-client-link)
@@ -234,11 +261,13 @@
     ((struct "wl_list") keyboards wlr-seat-client-keyboards)
     ((struct "wl_list") touches wlr-seat-client-touches)
     ((struct "wl_list") data_devices wlr-seat-client-data-devices)
-    ((struct "wl_signal") events.destroy wlr-seat-client-events-destroy))
+    ((struct "wl_signal") events.destroy wlr-seat-client-events-destroy)
+    ((struct "wlr_serial_ringset") serials wlr-seat-client-serials))
 
   (define-foreign-record-type (wlr-touch-point* "struct wlr_touch_point")
     ((struct "wl_listener") surface_destroy wlr-touch-point-surface-destroy)
     ((struct "wl_listener") focus_surface_destroy wlr-touch-point-focus-surface-destroy)
+    ((struct "wl_listener") client_destroy wlr-touch-point-client-destroy)
     ((struct "wl_signal") events.destroy wlr-touch-point-events-destroy)
     ((struct "wl_link") link wlr-touch-point-link))
 
@@ -247,28 +276,30 @@
                      (c-pointer (struct "wlr_surface"))
                      double
                      double))
-      enter wl-pointer-grab-interface-enter)
+      enter wlr-pointer-grab-interface-enter)
+    ((function void ((c-pointer (struct "wlr_seat_pointer_grab"))))
+      clear_focus wlr-pointer-grab-interface-clear-focus)
     ((function void ((c-pointer (struct "wlr_seat_pointer_grab"))
                      unsigned-int32
                      double
                      double))
-      motion wl-pointer-grab-interface-motion)
+      motion wlr-pointer-grab-interface-motion)
     ((function unsigned-int32 ((c-pointer (struct "wlr_seat_pointer_grab"))
                                unsigned-int32
                                double
                                double))
-      button wl-pointer-grab-interface-button)
+      button wlr-pointer-grab-interface-button)
     ((function void ((c-pointer (struct "wlr_seat_pointer_grab"))
                      unsigned-int32
                      (enum "wlr_axis_orientation")
                      double
                      int32
                      (enum "wlr_axis_source")))
-      axis wl-pointer-grab-interface-axis)
+      axis wlr-pointer-grab-interface-axis)
     ((function void ((c-pointer (struct "wlr_seat_pointer_grab"))))
-      frame wl-pointer-grab-interface-frame)
+      frame wlr-pointer-grab-interface-frame)
     ((function void ((c-pointer (struct "wlr_seat_pointer_grab"))))
-      cancel wl-pointer-grab-interface-cancel))
+      cancel wlr-pointer-grab-interface-cancel))
 
   (define-foreign-record-type (wlr-keyboard-grab-interface* "struct wlr_keyboard_grab_interface")
     ((function void ((c-pointer (struct "wlr_seat_keyboard_grab"))
@@ -276,41 +307,48 @@
                      (c-pointer unsigned-int32)
                      size_t
                      (c-pointer (struct "wlr_keyboard_modifiers"))))
-      enter wl-keyboard-grab-interface-enter)
+      enter wlr-keyboard-grab-interface-enter)
+    ((function void ((c-pointer (struct "wlr_seat_keyboard_grab"))))
+      clear_focus wlr-keyboard-grab-interface-clear-focus)
     ((function void ((c-pointer (struct "wlr_seat_keyboard_grab"))
                      unsigned-int32
                      unsigned-int32
                      unsigned-int32))
-      key wl-keyboard-grab-interface-key)
+      key wlr-keyboard-grab-interface-key)
     ((function void ((c-pointer (struct "wlr_seat_keyboard_grab"))
                      (c-pointer (struct "wlr_keyboard_modifiers"))))
-      modifiers wl-keyboard-grab-interface-modifiers)
+      modifiers wlr-keyboard-grab-interface-modifiers)
     ((function void ((c-pointer (struct "wlr_seat_keyboard_grab"))))
-      cancel wl-keyboard-grab-interface-cancel))
+      cancel wlr-keyboard-grab-interface-cancel))
 
   (define-foreign-record-type (wlr-touch-grab-interface* "struct wlr_touch_grab_interface")
     ((function unsigned-int32 ((c-pointer (struct "wlr_seat_touch_grab"))
                                unsigned-int32
                                (c-pointer (struct "wlr_touch_point"))))
-      down wl-touch-grab-interface-down)
+      down wlr-touch-grab-interface-down)
     ((function void ((c-pointer (struct "wlr_seat_touch_grab"))
                      unsigned-int32
                      (c-pointer (struct "wlr_touch_point"))))
-      up wl-touch-grab-interface-up)
+      up wlr-touch-grab-interface-up)
     ((function void ((c-pointer (struct "wlr_seat_touch_grab"))
                      unsigned-int32
                      (c-pointer (struct "wlr_touch_point"))))
-      motion wl-touch-grab-interface-motion)
+      motion wlr-touch-grab-interface-motion)
     ((function void ((c-pointer (struct "wlr_seat_touch_grab"))
                      unsigned-int32
                      (c-pointer (struct "wlr_touch_point"))))
-      enter wl-touch-grab-interface-enter)
+      enter wlr-touch-grab-interface-enter)
     ((function void ((c-pointer (struct "wlr_seat_touch_grab"))))
-      cancel wl-touch-grab-interface-cancel))
+      cancel wlr-touch-grab-interface-cancel))
 
   (define-foreign-record-type (wlr-seat-pointer-state* "struct wlr_seat_pointer_state")
     ((struct "wl_listener") surface_destroy wlr-seat-pointer-state-surface-destroy)
     ((struct "wl_signal") events.focus_change wlr-seat-pointer-state-events-focus-change))
+
+  ; XXX: unsafe
+  (define wlr-seat-pointer-state-buttons
+    (foreign-lambda* unsigned-int32 ((wlr-seat-pointer-state* obj) (int i))
+      "C_return(obj->buttons[i]);"))
 
   (define-foreign-record-type (wlr-seat-keyboard-state* "struct wlr_seat_keyboard_state")
     ((struct "wl_listener") keyboard_destroy wlr-seat-keyboard-state-keyboard-destroy)

@@ -8,6 +8,8 @@ struct wlr_drm_format_set;
 struct wlr_renderer {
 	const struct wlr_renderer_impl *impl;
 
+	bool rendering;
+
 //	struct {
 //		struct wl_signal destroy;
 //	} events;
@@ -35,6 +37,13 @@ bool wlr_render_texture(struct wlr_renderer *r, struct wlr_texture *texture,
  */
 bool wlr_render_texture_with_matrix(struct wlr_renderer *r,
 	struct wlr_texture *texture, const wlr_matrix matrix, float alpha);
+/**
+ * Renders the requested texture using the provided matrix, after cropping it
+ * to the provided rectangle.
+ */
+bool wlr_render_subtexture_with_matrix(struct wlr_renderer *r,
+	struct wlr_texture *texture, const struct wlr_fbox *box,
+	const wlr_matrix matrix, float alpha);
 /**
  * Renders a solid rectangle in the specified color.
  */
@@ -85,12 +94,23 @@ const struct wlr_drm_format_set *wlr_renderer_get_dmabuf_formats(
 bool wlr_renderer_read_pixels(struct wlr_renderer *r, enum wl_shm_format fmt,
 	uint32_t *flags, uint32_t stride, uint32_t width, uint32_t height,
 	uint32_t src_x, uint32_t src_y, uint32_t dst_x, uint32_t dst_y, void *data);
+
+/**
+ * Blits the dmabuf in src onto the one in dst.
+ */
+bool wlr_renderer_blit_dmabuf(struct wlr_renderer *r,
+	struct wlr_dmabuf_attributes *dst, struct wlr_dmabuf_attributes *src);
 /**
  * Checks if a format is supported.
  */
 bool wlr_renderer_format_supported(struct wlr_renderer *r,
 	enum wl_shm_format fmt);
-void wlr_renderer_init_wl_display(struct wlr_renderer *r,
+/**
+ * Creates necessary shm and invokes the initialization of the implementation.
+ *
+ * Returns false on failure.
+ */
+bool wlr_renderer_init_wl_display(struct wlr_renderer *r,
 	struct wl_display *wl_display);
 /**
  * Destroys this wlr_renderer. Textures must be destroyed separately.

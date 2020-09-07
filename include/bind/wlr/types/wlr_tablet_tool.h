@@ -3,14 +3,23 @@
  * tablet-unstable-v2 headers, so we can't include them
  */
 //enum wlr_tablet_tool_type {
-//	WLR_TABLET_TOOL_TYPE_PEN = 1,	/**< A generic pen */
-//	WLR_TABLET_TOOL_TYPE_ERASER,	/**< Eraser */
-//	WLR_TABLET_TOOL_TYPE_BRUSH,	/**< A paintbrush-like tool */
-//	WLR_TABLET_TOOL_TYPE_PENCIL,	/**< Physical drawing tool, e.g.
-//	                                     Wacom Inking Pen */
-//	WLR_TABLET_TOOL_TYPE_AIRBRUSH,	/**< An airbrush-like tool */
-//	WLR_TABLET_TOOL_TYPE_MOUSE,	/**< A mouse bound to the tablet */
-//	WLR_TABLET_TOOL_TYPE_LENS,	/**< A mouse tool with a lens */
+//	/** A generic pen */
+//	WLR_TABLET_TOOL_TYPE_PEN = 1,
+//	/** Eraser */
+//	WLR_TABLET_TOOL_TYPE_ERASER,
+//	/** A paintbrush-like tool */
+//	WLR_TABLET_TOOL_TYPE_BRUSH,
+//	/** Physical drawing tool, e.g. Wacom Inking Pen */
+//	WLR_TABLET_TOOL_TYPE_PENCIL,
+//	/** An airbrush-like tool */
+//	WLR_TABLET_TOOL_TYPE_AIRBRUSH,
+//	/** A mouse bound to the tablet */
+//	WLR_TABLET_TOOL_TYPE_MOUSE,
+//	/** A mouse tool with a lens */
+//	WLR_TABLET_TOOL_TYPE_LENS,
+//	/** A rotary device with positional and rotation data */
+//	WLR_TABLET_TOOL_TYPE_TOTEM,
+//
 //};
 
 struct wlr_tablet_tool {
@@ -45,22 +54,22 @@ struct wlr_tablet {
 //		struct wl_signal button;
 //	} events;
 
-	const char *name;
+	char *name;
 //	struct wlr_list paths; // char *
 
 	void *data;
 };
 
 //enum wlr_tablet_tool_axes {
-//	WLR_TABLET_TOOL_AXIS_X = 1,
-//	WLR_TABLET_TOOL_AXIS_Y = 2,
-//	WLR_TABLET_TOOL_AXIS_DISTANCE = 4,
-//	WLR_TABLET_TOOL_AXIS_PRESSURE = 8,
-//	WLR_TABLET_TOOL_AXIS_TILT_X = 16,
-//	WLR_TABLET_TOOL_AXIS_TILT_Y = 32,
-//	WLR_TABLET_TOOL_AXIS_ROTATION = 64,
-//	WLR_TABLET_TOOL_AXIS_SLIDER = 128,
-//	WLR_TABLET_TOOL_AXIS_WHEEL = 256,
+//	WLR_TABLET_TOOL_AXIS_X = 1 << 0,
+//	WLR_TABLET_TOOL_AXIS_Y = 1 << 1,
+//	WLR_TABLET_TOOL_AXIS_DISTANCE = 1 << 2,
+//	WLR_TABLET_TOOL_AXIS_PRESSURE = 1 << 3,
+//	WLR_TABLET_TOOL_AXIS_TILT_X = 1 << 4,
+//	WLR_TABLET_TOOL_AXIS_TILT_Y = 1 << 5,
+//	WLR_TABLET_TOOL_AXIS_ROTATION = 1 << 6,
+//	WLR_TABLET_TOOL_AXIS_SLIDER = 1 << 7,
+//	WLR_TABLET_TOOL_AXIS_WHEEL = 1 << 8,
 //};
 
 struct wlr_event_tablet_tool_axis {

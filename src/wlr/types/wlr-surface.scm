@@ -42,6 +42,7 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-surface-state/transform
          wlr-surface-state/scale
          wlr-surface-state/frame-callback-list
+         wlr-surface-state/viewport
 
          wlr-surface-state-committed
          wlr-surface-state-buffer-resource
@@ -58,6 +59,11 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-surface-state-height
          wlr-surface-state-buffer-width
          wlr-surface-state-buffer-height
+         wlr-surface-state-viewport-has-src?
+         wlr-surface-state-viewport-has-dst?
+         wlr-surface-state-viewport-src
+         wlr-surface-state-viewport-dst-width
+         wlr-surface-state-viewport-dst-height
          wlr-surface-state-buffer-destroy
 
          wlr-surface-role-name
@@ -121,7 +127,8 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-surface-get-extends
          wlr-surface-from-resource
          wlr-surface-for-each-surface
-         wlr-surface-get-effective-damage)
+         wlr-surface-get-effective-damage
+         wlr-surface-get-buffer-source-box)
   (import (scheme)
           (chicken base)
           (chicken gc)
@@ -139,7 +146,8 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
     (wlr-surface-state/input-region        "WLR_SURFACE_STATE_INPUT_REGION")
     (wlr-surface-state/transform           "WLR_SURFACE_STATE_TRANSFORM")
     (wlr-surface-state/scale               "WLR_SURFACE_STATE_SCALE")
-    (wlr-surface-state/frame-callback-list "WLR_SURFACE_STATE_FRAME_CALLBACK_LIST"))
+    (wlr-surface-state/frame-callback-list "WLR_SURFACE_STATE_FRAME_CALLBACK_LIST")
+    (wlr-surface-state/viewport            "WLR_SURFACE_STATE_VIEWPORT"))
 
   (define-foreign-record-type (wlr-surface-state* "struct wlr_surface_state")
     ((struct "pixman_region32") surface_damage wlr-surface-state-surface-damage)
@@ -147,6 +155,11 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
     ((struct "pixman_region32") opaque wlr-surface-state-opaque)
     ((struct "pixman_region32") input wlr-surface-state-input)
     ((struct "wl_list") frame_callback_list wlr-surface-state-frame-callback-list)
+    (bool viewport.has_src wlr-surface-state-viewport-has-src?)
+    (bool viewport.has_dst wlr-surface-state-viewport-has-dst?)
+    ((struct "wlr_fbox") viewport.src wlr-surface-state-viewport-src)
+    (int viewport.dst_width wlr-surface-state-viewport-dst-width)
+    (int viewport.dst_height wlr-surface-state-viewport-dst-height)
     ((struct "wl_listener") buffer_destroy wlr-surface-state-buffer-destroy))
 
   (define-foreign-record-type (wlr-surface-role* "struct wlr_surface_role")

@@ -28,6 +28,11 @@
          wlr-box-width
          wlr-box-height
 
+         wlr-fbox-x
+         wlr-fbox-y
+         wlr-fbox-width
+         wlr-fbox-height
+
          wlr-box-closest-point
          wlr-box-intersection
          wlr-box-contains-point?
@@ -56,6 +61,13 @@
   (set! make-wlr-box
     (lambda (x y w h)
       (let ((box (%make-wlr-box x y w h)))
+        (set-finalizer! box free)
+        box)))
+
+  (define %make-wlr-fbox make-wlr-fbox)
+  (set! make-wlr-fbox
+    (lambda (x y w h)
+      (let ((box (%make-wlr-fbox x y w h)))
         (set-finalizer! box free)
         box)))
 

@@ -165,6 +165,12 @@
 (define-foreign-type wlr-seat (struct "wlr_seat"))
 (define-foreign-type wlr-seat* (c-pointer wlr-seat))
 
+(define-foreign-type wlr-serial-range (struct "wlr_serial_range"))
+(define-foreign-type wlr-serial-range* (c-pointer wlr-serial-range))
+
+(define-foreign-type wlr-serial-ringset (struct "wlr_serial_ringset"))
+(define-foreign-type wlr-serial-ringset* (c-pointer wlr-serial-ringset))
+
 (define-foreign-type wlr-session (struct "wlr_session"))
 (define-foreign-type wlr-session* (c-pointer wlr-session))
 
@@ -280,7 +286,11 @@
 (define-foreign-type wlr-key-state (enum "wlr_key_state"))
 (define-foreign-type wlr-keyboard-led (enum "wlr_keyboard_led"))
 (define-foreign-type wlr-keyboard-modifier (enum "wlr_keyboard_modifier"))
+(define-foreign-type wlr-output-adaptive-sync-status (enum "wlr_output_adaptive_sync_status"))
 (define-foreign-type wlr-output-present-flag (enum "wlr_output_present_flag"))
+(define-foreign-type wlr-output-state-buffer-type (enum "wlr_output_state_buffer_type"))
+(define-foreign-type wlr-output-state-field (enum "wlr_output_state_field"))
+(define-foreign-type wlr-output-state-mode-type (enum "wlr_output_state_mode_type"))
 (define-foreign-type wlr-renderer-read-pixels-flags (enum "wlr_renderer_read_pixels_flags"))
 (define-foreign-type wlr-surface-state-field (enum "wlr_surface_state_field"))
 (define-foreign-type wlr-tablet-tool-axes (enum "wlr_tablet_tool_axes"))

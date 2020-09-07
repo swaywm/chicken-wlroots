@@ -24,6 +24,7 @@
 (module (wlr render wlr-renderer)
         (wlr-renderer-read-pixels/y-invert
          wlr-renderer-impl
+         wlr-renderer-rendering?
          wlr-renderer-events-destroy
          wlr-renderer-autocreate
          wlr-renderer-begin
@@ -32,6 +33,7 @@
          wlr-renderer-scissor
          wlr-render-texture
          wlr-render-texture-with-matrix
+         wlr-render-subtexture-with-matrix
          wlr-render-rect
          wlr-render-quad-with-matrix
          wlr-render-ellipse
@@ -40,6 +42,7 @@
          wlr-renderer-resource-is-wl-drm-buffer
          wlr-renderer-get-dmabuf-formats
          wlr-renderer-read-pixels
+         wlr-renderer-blit-dmabuf
          wlr-renderer-format-supported
          wlr-renderer-init-wl-display
          wlr-renderer-destroy)
@@ -48,6 +51,7 @@
   (include "ffi-helpers.scm")
 
   (bind-file "include/bind/wlr/render/wlr_renderer.h")
+  (define wlr-renderer-rendering? wlr-renderer-rendering)
 
   (define-foreign-values wlr-renderer-read-pixels-flags
     (wlr-renderer-read-pixels/y-invert "WLR_RENDERER_READ_PIXELS_Y_INVERT"))

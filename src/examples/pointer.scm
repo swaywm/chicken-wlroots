@@ -97,12 +97,12 @@
   (let* ((state (output-state sample-output))
          (wlr-output (output-output sample-output))
          (renderer (wlr-backend-get-renderer (wlr-output-backend wlr-output))))
-    (wlr-output-make-current wlr-output)
+    (wlr-output-attach-render wlr-output)
     (wlr-renderer-begin renderer (wlr-output-width wlr-output) (wlr-output-height wlr-output))
     (wlr-renderer-clear renderer (state-clear-color state))
     (wlr-output-render-software-cursors wlr-output #f)
-    (wlr-output-swap-buffers wlr-output #f #f)
-    (wlr-renderer-end renderer)))
+    (wlr-renderer-end renderer)
+    (wlr-output-commit wlr-output)))
 
 (define (handle-cursor-motion state event)
   (wlr-cursor-move (state-cursor state)
@@ -204,7 +204,8 @@
     (wlr-xcursor-manager-load (state-xcursor-manager state) (wlr-output-scale output))
     (wlr-xcursor-manager-set-cursor-image (state-xcursor-manager state)
                                           "left_ptr"
-                                          (state-cursor state))))
+                                          (state-cursor state))
+    (wlr-output-commit output)))
 
 (define (keyboard-destroy-notify keyboard)
   (remove-wl-listener (keyboard-key keyboard))

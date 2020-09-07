@@ -32,6 +32,7 @@ struct wlr_keyboard_modifiers {
 
 struct wlr_keyboard {
 	const struct wlr_keyboard_impl *impl;
+	struct wlr_keyboard_group *group;
 
 	char *keymap_string;
 	size_t keymap_size;
@@ -67,6 +68,7 @@ struct wlr_keyboard {
 //		struct wl_signal modifiers;
 //		struct wl_signal keymap;
 //		struct wl_signal repeat_info;
+//		struct wl_signal destroy;
 //	} events;
 
 	void *data;
@@ -84,8 +86,11 @@ struct wlr_event_keyboard_key {
 	enum wlr_key_state state;
 };
 
-void wlr_keyboard_set_keymap(struct wlr_keyboard *kb,
+bool wlr_keyboard_set_keymap(struct wlr_keyboard *kb,
 	struct xkb_keymap *keymap);
+
+bool wlr_keyboard_keymaps_match(struct xkb_keymap *km1, struct xkb_keymap *km2);
+
 /**
  * Sets the keyboard repeat info. `rate` is in key repeats/second and delay is
  * in milliseconds.

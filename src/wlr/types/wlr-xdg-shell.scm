@@ -74,6 +74,7 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-xdg-popup-grab-client
          wlr-xdg-popup-grab-pointer-grab
          wlr-xdg-popup-grab-keyboard-grab
+         wlr-xdg-popup-grab-touch-grab
          wlr-xdg-popup-grab-seat
          wlr-xdg-popup-grab-popups
          wlr-xdg-popup-grab-link
@@ -99,8 +100,9 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
 
          wlr-xdg-toplevel-resource
          wlr-xdg-toplevel-base
-         wlr-xdg-toplevel-parent
          wlr-xdg-toplevel-added?
+         wlr-xdg-toplevel-parent
+         wlr-xdg-toplevel-parent-unmap
          wlr-xdg-toplevel-client-pending
          wlr-xdg-toplevel-server-pending
          wlr-xdg-toplevel-current
@@ -170,7 +172,6 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
          wlr-xdg-toplevel-show-window-menu-event-y
 
          wlr-xdg-shell-create
-         wlr-xdg-shell-destroy
          wlr-xdg-surface-from-resource
          wlr-xdg-surface-from-popup-resource
          wlr-xdg-surface-from-toplevel-resource
@@ -232,6 +233,7 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
   (define-foreign-record-type (wlr-xdg-popup-grab* "struct wlr_xdg_popup_grab")
     ((struct "wlr_seat_pointer_grab") pointer_grab wlr-xdg-popup-grab-pointer-grab)
     ((struct "wlr_seat_keyboard_grab") keyboard_grab wlr-xdg-popup-grab-keyboard-grab)
+    ((struct "wlr_seat_touch_grab") touch_grab wlr-xdg-popup-grab-touch-grab)
     ((struct "wl_list") popups wlr-xdg-popup-grab-popups)
     ((struct "wl_list") link wlr-xdg-popup-grab-link)
     ((struct "wl_listener") seat_destroy wlr-xdg-popup-grab-seat-destroy))
@@ -245,6 +247,7 @@ static void scheme_wlr_surface_iterator(struct wlr_surface *surface, int sx, int
     ((struct "wl_listener") fullscreen_output_destroy wlr-xdg-toplevel-state-fullscreen-output-destroy))
 
   (define-foreign-record-type (wlr-xdg-toplevel* "struct wlr_xdg_toplevel")
+    ((struct "wl_listener") parent_unmap wlr-xdg-toplevel-parent-unmap)
     ((struct "wlr_xdg_toplevel_state") client_pending wlr-xdg-toplevel-client-pending)
     ((struct "wlr_xdg_toplevel_state") server_pending wlr-xdg-toplevel-server-pending)
     ((struct "wlr_xdg_toplevel_state") current wlr-xdg-toplevel-current)

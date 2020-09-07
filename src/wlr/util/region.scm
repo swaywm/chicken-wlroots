@@ -23,6 +23,7 @@
 
 (module (wlr util region)
         (wlr-region-scale
+         wlr-region-scale-xy
          wlr-region-transform
          wlr-region-expand
          wlr-region-rotated-bounds

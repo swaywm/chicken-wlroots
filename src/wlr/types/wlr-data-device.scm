@@ -23,7 +23,6 @@
 
 (module (wlr types wlr-data-device)
         (wlr-data-device-manager-global
-         wlr-data-device-manager-resources
          wlr-data-device-manager-data-sources
          wlr-data-device-manager-display-destroy
          wlr-data-device-manager-events-destroy
@@ -93,7 +92,6 @@
          wlr-drag-drop-event-time
 
          wlr-data-device-manager-create
-         wlr-data-device-manager-destroy
          wlr-seat-request-set-selection
          wlr-seat-set-selection
          wlr-drag-create
@@ -120,7 +118,6 @@
   (define wlr-drag-cancelling? wlr-drag-cancelling)
 
   (define-foreign-record-type (wlr-data-device-manager* "struct wlr_data_device_manager")
-    ((struct "wl_list") resources wlr-data-device-manager-resources)
     ((struct "wl_list") data_sources wlr-data-device-manager-data-sources)
     ((struct "wl_listener") display_destroy wlr-data-device-manager-display-destroy)
     ((struct "wl_signal") events.destroy wlr-data-device-manager-events-destroy))

@@ -22,8 +22,7 @@
 (include "wlroots-types.scm")
 
 (module (wlr types wlr-compositor)
-        (wlr-compositor-destroy
-         wlr-compositor-create
+        (wlr-compositor-create
          wlr-surface-is-subsurface
          wlr-subsurface-from-wlr-surface)
   (import (scheme)
@@ -32,14 +31,7 @@
 
   (bind-file "include/bind/wlr/types/wlr_compositor.h")
 
-  (define-foreign-record-type (wlr-subcompositor* "struct wlr_subcompositor")
-    ((struct "wl_list") resources wlr-subcompositor-resources)
-    ((struct "wl_list") subsurface_resources wlr-subcompositor-subsurface-resources))
-
   (define-foreign-record-type (wlr-compositor* "struct wlr_compositor")
-    ((struct "wl_list") resources wlr-compositor-resources)
-    ((struct "wl_list") surface_resources wlr-compositor-surface-resources)
-    ((struct "wl_list") region_resources wlr-compositor-region-resources)
     ((struct "wlr_subcompositor") subcompositor wlr-compositor-subcompositor)
     ((struct "wl_listener") display_destroy wlr-compositor-display-destroy)
     ((struct "wl_signal") events.new_surface wlr-compositor-events-new-surface)

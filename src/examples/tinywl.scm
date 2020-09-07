@@ -59,11 +59,17 @@
 
 (include "xkbcommon-keysyms.scm")
 
+(define (bit-on? bits bit)
+  (positive? (bitwise-and bits bit)))
+
+(define (fix n)
+  (exact (truncate n)))
+
 (define-record-type tinywl-server
   (%make-server display backend renderer
                 xdg-shell views
                 cursor cursor-manager cursor-mode
-                seat keyboards grabbed-view grab-x grab-y grab-width grab-height resize-edges
+                seat keyboards grabbed-view grab-x grab-y grab-geobox resize-edges
                 output-layout outputs)
   server?
   (display        server:display        server:display-set!)
@@ -82,8 +88,7 @@
   (grabbed-view   server:grabbed-view   server:grabbed-view-set!)
   (grab-x         server:grab-x         server:grab-x-set!)
   (grab-y         server:grab-y         server:grab-y-set!)
-  (grab-width     server:grab-width     server:grab-width-set!)
-  (grab-height    server:grab-height    server:grab-height-set!)
+  (grab-geobox    server:grab-geobox    server:grab-geobox-set!)
   (resize-edges   server:resize-edges   server:resize-edges-set!)
 
   (output-layout  server:output-layout  server:output-layout-set!)
@@ -93,7 +98,7 @@
   (%make-server display backend renderer
                 xdg-shell '()
                 cursor cursor-manager 'passthrough
-                seat '() #f 0 0 0 0 0
+                seat '() #f 0 0 (make-wlr-box 0 0 0 0) 0
                 olayout '()))
 
 (define-record-type tinywl-output
@@ -268,6 +273,14 @@
                             (wlr-seat-pointer-request-set-cursor-event-hotspot-x event)
                             (wlr-seat-pointer-request-set-cursor-event-hotspot-y event))))
 
+; This event is raised by the seat when a client wants to set the selection,
+; usually when the user copies something. wlroots allows compositors to
+; ignore such requests if they so choose, but in tinywl we always honor
+(define (seat-request-set-selection server event)
+  (wlr-seat-set-selection (server:seat server)
+                          (wlr-seat-request-set-selection-event-source event)
+                          (wlr-seat-request-set-selection-event-serial event)))
+
 (define (view-at view lx ly)
   ; XDG toplevels may have nested surfaces, such as popup windows for context
   ; menus or tooltips. This function tests if any of those are underneath the
@@ -308,36 +321,40 @@
 ; commit any movement that was prepared.
 (define (process-cursor-resize server time)
   (let* ((view (server:grabbed-view server))
-         (dx (- (wlr-cursor-x (server:cursor server))
-                (server:grab-x server)))
-         (dy (- (wlr-cursor-y (server:cursor server))
-                (server:grab-y server)))
-         (x (tinywl-view:x view))
-         (y (tinywl-view:y view))
-         (width (server:grab-width server))
-         (height (server:grab-height server))
+         (border-x (- (wlr-cursor-x (server:cursor server))
+                      (server:grab-x server)))
+         (border-y (- (wlr-cursor-y (server:cursor server))
+                      (server:grab-y server)))
+         (geobox (server:grab-geobox server))
+         (new-left (wlr-box-x geobox))
+         (new-right (+ (wlr-box-x geobox) (wlr-box-width geobox)))
+         (new-top (wlr-box-y geobox))
+         (new-bottom (+ (wlr-box-y geobox) (wlr-box-height geobox)))
          (edges (server:resize-edges server)))
     (cond
-      ((positive? (bitwise-and edges wlr-edge/top))
-        (set! y (+ (server:grab-y server) dy))
-        (set! height (- height dy))
-        (when (< height 1)
-          (set! y (+ y height))))
-      ((positive? (bitwise-and edges wlr-edge/bottom))
-        (set! height (+ height dy))))
+      ((bit-on? edges wlr-edge/top)
+        (set! new-top border-y)
+        (when (>= new-top new-bottom)
+          (set! new-top (- new-bottom 1))))
+      ((bit-on? edges wlr-edge/bottom)
+        (set! new-bottom border-y)
+        (when (<= new-bottom new-top)
+          (set! new-bottom (+ new-top 1)))))
     (cond
-      ((positive? (bitwise-and edges wlr-edge/left))
-        (set! x (+ (server:grab-x server) dx))
-        (set! width (- width dx))
-        (when (< width 1)
-          (set! x (+ x width))))
-      ((positive? (bitwise-and edges wlr-edge/right))
-        (set! width (+ width dx))))
-    (tinywl-view:x-set! view x)
-    (tinywl-view:y-set! view y)
+      ((bit-on? edges wlr-edge/left)
+        (set! new-left border-x)
+        (when (>= new-left new-right)
+          (set! new-left (- new-right 1))))
+      ((bit-on? edges wlr-edge/right)
+        (set! new-right border-x)
+        (when (<= new-right new-left)
+          (set! new-right (+ new-left 1)))))
+    (let ((geobox (wlr-xdg-surface-get-geometry (tinywl-view:xdg-surface view))))
+      (tinywl-view:x-set! view (- new-left (wlr-box-x geobox)))
+      (tinywl-view:y-set! view (- new-top (wlr-box-y geobox))))
     (wlr-xdg-toplevel-set-size (tinywl-view:xdg-surface view)
-                               (max 0 (exact (truncate width)))
-                               (max 0 (exact (truncate height))))))
+                               (max 0 (fix (- new-right new-left)))
+                               (max 0 (fix (- new-bottom new-top))))))
 
 (define (process-cursor-motion server time)
   ; If the mode is non-passthrough, delegate to those functions.
@@ -460,12 +477,12 @@
                     ((h)   (wlr-surface-state-height (wlr-surface-current surface)))
                     ; We also have to apply the scale factor for HiDPI outputs. This is only
                     ; part of the puzzle. TinyWL does not fully support HiDPI.
-                    ((box) (make-wlr-box (exact (truncate (* (+ x  sx (tinywl-view:x view))
-                                                             (wlr-output-scale output))))
-                                         (exact (truncate (* (+ y  sy (tinywl-view:y view))
-                                            (wlr-output-scale output))))
-                                         (exact (truncate (* w (wlr-output-scale output))))
-                                         (exact (truncate (* h (wlr-output-scale output))))))
+                    ((box) (make-wlr-box (fix (* (+ x  sx (tinywl-view:x view))
+                                                 (wlr-output-scale output)))
+                                         (fix (* (+ y  sy (tinywl-view:y view))
+                                                 (wlr-output-scale output)))
+                                         (fix (* w (wlr-output-scale output)))
+                                         (fix (* h (wlr-output-scale output)))))
                     ((mat) (make-wlr-matrix)))
         ; Those familiar with OpenGL are also familiar with the role of matrices
         ; in graphics programming. We need to prepare a matrix to render the view
@@ -495,8 +512,8 @@
 (define (output-frame server wm-output output)
   (let-values (((renderer) (server:renderer server))
                ((now) (clock-gettime))
-               ; wlr-output-make-current makes the OpenGL context current.
-               ((success buffer-age) (wlr-output-make-current output)))
+               ; wlr-output-attach-render makes the OpenGL context current.
+               ((success buffer-age) (wlr-output-attach-render output)))
     (when success
       ; The "effective" resolution can change if you rotate your inputs
       (let-values (((width height) (wlr-output-effective-resolution output)))
@@ -528,7 +545,7 @@
       (wlr-output-render-software-cursors output #f)
       ; conclude rendering and swap the buffers, showing the final frame on-screen.
       (wlr-renderer-end renderer)
-      (wlr-output-swap-buffers output #f #f))))
+      (wlr-output-commit output))))
 
 ; This event is raised by the backend when a new output (aka a display or
 ; monitor) becomes available. 
@@ -536,10 +553,13 @@
   ; some backends don't have modes. DRM+KMS does, and we need to set a mode
   ; before we can use the output. The mode is a tuple of (width, height,
   ; refresh rate), and each monitor supports only a specific set of modes. We
-  ; just pick the first, a more sophisticated compositor would let the user
-  ; configure it or pick the mode the display advertises as preferred.
+  ; just pick the monitor's preferred mode, a more sophisticated compositor
+  ; would let the user configure it.
   (unless (wl-list-empty? (wlr-output-%modes output))
-    (wlr-output-set-mode output (last (wlr-output-modes output))))
+    (wlr-output-set-mode output (wlr-output-preferred-mode output))
+    (wlr-output-enable output #t)
+    ; FIXME: if (!wlr_output_commit(wlr_output)) return;
+    (wlr-output-commit output))
 
   ; Allocates and configures out state for this output
   (let ((wm-output (make-tinywl-output server output)))
@@ -551,12 +571,11 @@
   ; from left-to-right in the order they appear.  A more sophisticated
   ; compositor would let the user configure the arrangement of the outputs in the
   ; layout.
-  (wlr-output-layout-add-auto (server:output-layout server) output)
-
-  ; Creating the global adds a wl_output global to the display, which Wayland
-  ; clients can see to find out information about the output (such as DPI,
-  ; scale factor, manufacturer, etc).
-  (wlr-output-create-global output))
+  ;
+  ; The output layout utility automatically adds a wl_output global to the
+  ; display, which Wayland clients can see to find out information about the
+  ; output (such as DPI, scale factor, manufaturer, etc).
+  (wlr-output-layout-add-auto (server:output-layout server) output))
 
 ; Called when the surface is mapped, or ready to display on-screen.
 (define (xdg-surface-map view)
@@ -583,17 +602,25 @@
                     (wlr-seat-pointer-state (server:seat server))))
       (server:grabbed-view-set! server view)
       (server:cursor-mode-set! server mode)
-      (let ((geo-box (wlr-xdg-surface-get-geometry (tinywl-view:xdg-surface view))))
-        (if (symbol=? mode 'move)
-          (begin
-            (server:grab-x-set! server (- (wlr-cursor-x cursor) (tinywl-view:x view)))
-            (server:grab-y-set! server (- (wlr-cursor-y cursor) (tinywl-view:y view))))
-          (begin
-            (server:grab-x-set! server (+ (wlr-cursor-x cursor) (wlr-box-x geo-box)))
-            (server:grab-y-set! server (+ (wlr-cursor-y cursor) (wlr-box-y geo-box)))))
-        (server:grab-width-set! server (wlr-box-width geo-box))
-        (server:grab-height-set! server (wlr-box-height geo-box))
-        (server:resize-edges-set! server edges)))))
+      (if (symbol=? mode 'move)
+        (begin
+          (server:grab-x-set! server (- (wlr-cursor-x cursor) (tinywl-view:x view)))
+          (server:grab-y-set! server (- (wlr-cursor-y cursor) (tinywl-view:y view))))
+        (let* ((geo-box (wlr-xdg-surface-get-geometry (tinywl-view:xdg-surface view)))
+               (border-x (+ (+ (tinywl-view:x view) (wlr-box-x geo-box))
+                            (if (bit-on? edges wlr-edge/right)
+                              (wlr-box-width geo-box)
+                              0)))
+               (border-y (+ (+ (tinywl-view:y view) (wlr-box-y geo-box))
+                            (if (bit-on? edges wlr-edge/bottom)
+                              (wlr-box-height geo-box)
+                              0))))
+            (server:grab-x-set! server (- (wlr-cursor-x cursor) border-x))
+            (server:grab-y-set! server (- (wlr-cursor-y cursor) border-y))
+            (set! (wlr-box-x geo-box) (fix (+ (wlr-box-x geo-box) (tinywl-view:x view))))
+            (set! (wlr-box-y geo-box) (fix (+ (wlr-box-y geo-box) (tinywl-view:y view))))
+            (server:grab-geobox-set! server geo-box)
+            (server:resize-edges-set! server edges))))))
 
 ; This event is raised when a client would like to begin an interactive
 ; move, typically because the user clicked on their client-side
@@ -690,7 +717,9 @@
   ; This creates some hands-off wlroots interfaces. The compositor is
   ; necessary for clients to allocate surfaces and the data device manager
   ; handles the clipboard. Each of these wlroots interfaces has room for you
-  ; to dig your fingers in and play with their beharior if you want.
+  ; to dig your fingers in and play with their beharior if you want. Note that
+  ; the clients cannot set the selection directly without compositor approval,
+  ; see the handling of the request_set_selection event below.
   (wlr-compositor-create display renderer)
   (wlr-data-device-manager-create display)
   ; Configure a listener to be notified when new outputs are available on the backend.
@@ -730,6 +759,8 @@
     (make-wl-listener (lambda (input-device) (server-new-input server input-device))))
   (wl-signal-add (wlr-seat-events-request-set-cursor seat)
     (make-wl-listener (lambda (event) (seat-request-cursor server event))))
+  (wl-signal-add (wlr-seat-events-request-set-selection seat)
+    (make-wl-listener (lambda (event) (seat-request-set-selection server event))))
 
   ; Add a Unix socket to the Wayland display.
   (let ((socket (wl-display-add-socket-auto display)))
